@@ -1,0 +1,22 @@
+# use ansible_user if another user is required for some operations
+127.0.0.1
+
+#kafka
+[kafkaservers]
+
+127.0.0.1
+
+#jenkins and nexus
+[devserver]
+
+127.0.0.1
+
+#mariadb
+[dbservers]
+
+127.0.0.1
+
+#java
+[appservers]
+
+127.0.0.1

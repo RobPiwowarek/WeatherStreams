@@ -1,0 +1,17 @@
+---
+- hosts: appservers
+  roles:
+    - java
+
+- hosts: kafkaservers
+  roles:
+    - kafka
+
+- hosts: devservers
+  roles:
+    - jenkins
+    - nexus
+
+- hosts: dbservers
+  roles:
+    - mariadb
