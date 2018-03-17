@@ -1,2 +1,9 @@
 ---
-# tasks file for java
+
+- name: Include OS-specific variables
+  include_vars: "{{ ansible_distribution }}.yml"
+
+- name: Install java
+  apt:
+    name: "{{ java_packages }}"
+    update_cache: yes
