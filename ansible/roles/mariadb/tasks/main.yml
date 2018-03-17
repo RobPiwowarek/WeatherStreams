@@ -1,2 +1,36 @@
 ---
-# tasks file for roles/mariadb
+- name: Checking OS
+  fail:
+    msg: "Unsupported OS {{ ansible_distribution }}"
+  when: ansible_distribution != "Ubuntu"
+
+- name: Importing OS-specific variables
+  include_vars: "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+
+- name: Installing required
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - software-properties-common
+    - python-mysqldb
+
+- name: Install
+  apt:
+    name: mariadb-server
+    update_cache: yes
+
+- name: "Start {{ mariadb_service }}"
+  service:
+    name: "{{ mariadb_service }}"
+    state: started
+    enabled: yes
+  
+- include_vars: users.yml
+
+- name: "Add user"
+  mysql_user:
+    name: "{{ mariadb_user_name }}"
+    password: "{{ mariadb_user_password }}"
+    priv: '*.*:ALL'
+    state: present
