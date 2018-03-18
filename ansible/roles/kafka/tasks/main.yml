@@ -1,2 +1,46 @@
 ---
-# tasks file for kafka
+- name: Checking OS
+  fail:
+    msg: "Unsupported OS {{ ansible_distribution }}"
+  when: ansible_distribution != "Ubuntu"
+
+- name: Installing zookeeperd
+  apt:
+    name: zookeeperd
+    state: present
+    update_cache: yes
+
+- name: Start zookeeper
+  service:
+    name: zookeeper
+    state: started
+    enabled: yes
+
+- name: Creating kafka directory
+  file:
+    path: "{{ kafka_dir }}"
+    state: directory
+
+- name: Downloading kafka
+  unarchive:
+    src: "{{ kafka_src }}"
+    dest: "{{ kafka_dir }}"
+    creates: "{{ kafka_dir }}/{{ kafka_version }}"
+    remote_src: yes
+
+- name: Creating kafka.service
+  template:
+    src: kafka.service.j2
+    dest: /etc/systemd/system/kafka.service
+
+- name: Creating kafka service working directory
+  file:
+    path: /var/lib/kafka
+    state: directory
+
+- name: Starting service
+  systemd:
+    name: kafka.service
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
