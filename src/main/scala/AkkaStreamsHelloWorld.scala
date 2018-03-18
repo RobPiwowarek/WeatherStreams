@@ -27,5 +27,5 @@ object AkkaStreamsHelloWorld extends App {
     factorials
       .map(num ⇒ ByteString(s"$num\n"))
       .runWith(FileIO.toPath(Paths.get("factorials.txt")))
-  
+
 }
