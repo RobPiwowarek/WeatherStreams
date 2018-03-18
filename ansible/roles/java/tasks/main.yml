@@ -1,0 +1,13 @@
+---
+- name: Checking OS
+  fail:
+    msg: "Unsupported OS {{ ansible_distribution }}"
+  when: ansible_distribution != "Ubuntu"
+
+- name: Include OS-specific variables
+  include_vars: "{{ ansible_distribution }}.yml"
+
+- name: Install java
+  apt:
+    name: "{{ java_packages }}"
+    update_cache: yes

@@ -1,0 +1,10 @@
+[Unit]
+Description=Apache Kafka Server
+After=network.target
+[Service]
+User=root
+WorkingDirectory=/var/lib/kafka
+ExecStart={{ kafka_dir }}/{{ kafka_version }}/bin/kafka-server-start.sh {{ kafka_dir }}/{{ kafka_version }}/config/server.properties
+ExecStop={{ kafka_dir }}/{{ kafka_version }}/bin/kafka-server-stop.sh
+[Install]
+WantedBy=multi-user.target

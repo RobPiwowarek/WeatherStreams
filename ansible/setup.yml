@@ -1,0 +1,23 @@
+---
+- hosts: appservers
+  become: yes
+  roles:
+    - java
+
+- hosts: kafkaservers
+  become: yes
+  roles:
+    - java
+    - kafka
+
+- hosts: devserver
+  become: yes
+  roles:
+    - jenkins
+    - nexus
+    - java
+
+- hosts: dbservers
+  become: yes
+  roles:
+    - mariadb
