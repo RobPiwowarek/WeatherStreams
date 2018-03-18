@@ -25,10 +25,16 @@
     name: "{{ mariadb_service }}"
     state: started
     enabled: yes
+
   
 - include_vars: users.yml
 
-- name: "Add user"
+- name: Set root password
+  mysql_user:
+    name: root
+    password: "{{ mariadb_root_password }}"
+
+- name: Add user
   mysql_user:
     name: "{{ mariadb_user_name }}"
     password: "{{ mariadb_user_password }}"
