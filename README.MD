@@ -1,0 +1,1 @@
+Weather data streams project for PIK classes at WUT
