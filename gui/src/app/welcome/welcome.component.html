@@ -1,0 +1,30 @@
+
+<div class="ui-g" style="min-height: 400px">
+	<div class="ui-g-12 ui-g-nopad">
+		<div class="ui-g-4"></div>
+		<div class="ui-g-2">
+			<div *ngIf='needLogin'>
+				<br />
+				<div id="centerEverything">
+					<h2>Weather Streams</h2>
+				</div>
+				<br /> <br /> 
+				<span class="ui-float-label"> <input
+					id="user-float-input" type="text" size="32" pInputText #username>
+					<label for="user-float-input">username</label>
+				</span> <br /> <span class="ui-float-label"> <input
+					id="pass-float-input" type="password" size="32" pInputText
+					#password> <label for="pass-float-input">password</label>
+				</span> 
+				<br /> <br />
+				<div id="centerEverything">
+					<button (click)="login(username.value, password.value)" pButton
+						type="button" label="Login" icon="fa-sign-in"
+						class="ui-button-success"></button>
+					<p style="color:red">{{msg}}</p>
+				</div>
+			</div>
+		</div>
+		<div class="ui-g-6"></div>
+	</div>
+</div>

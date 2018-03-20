@@ -1,0 +1,15 @@
+<div class="ui-g" >
+	<div class="ui-g-12" *ngIf='needLogin'>
+		<app-welcome (userLogged)='onUserLogged($event)'></app-welcome>
+	</div>
+	
+	<div class="ui-g-12" *ngIf='!needLogin'>
+		<p-menubar [model]="menus" >
+			<div>
+        		<button pButton (click)="logout()" [routerLink]="['/']" label="Logout" icon="fa-sign-out" class="ui-button-warning"></button>
+    		</div>
+		</p-menubar>
+		<router-outlet></router-outlet>
+	</div>
+	
+</div>
