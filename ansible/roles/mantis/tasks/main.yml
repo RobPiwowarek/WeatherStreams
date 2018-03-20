@@ -27,10 +27,16 @@
     - php7.0-cli
     - php7.0-mbstring
 
+- name: Transfer database schema
+  copy:
+    src: schema.sql
+    dest: /tmp/schema.sql
+
 - name: Create database
   mysql_db:
     name: mantis
-    state: present
+    state: import
+    target: /tmp/schema.sql
 
 - include_vars: users.yml
 
@@ -52,6 +58,11 @@
     dest: "/var/www/html/mantis"
     creates: "/var/www/html/mantis/mantisbt-2.4.0"
     remote_src: yes
+
+- name: Setup mantis configuration
+  template:
+    src: "config_inc.php.j2"
+    dest: "/var/www/html/mantis/mantisbt-2.4.0/config/config_inc.php"
 
 - name: Copy apache port configuration
   template:

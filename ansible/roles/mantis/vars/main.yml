@@ -1,2 +1,4 @@
 ---
 mantis_port: 4040
+# mantis_smtp_host: '' TO SET
+# mantis_admin_mail: '' TO SET
