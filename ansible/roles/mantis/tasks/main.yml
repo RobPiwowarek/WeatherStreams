@@ -1,0 +1,76 @@
+---
+- name: Install apache
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - apache2
+    - libapache2-mod-php7.0
+
+- name: Enable SSL
+  apache2_module:
+    name: ssl
+    state: present
+
+- name: Restart apache2
+  service:
+    name: apache2
+    state: reloaded
+    enabled: yes
+
+- name: Install php
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - php7.0
+    - php7.0-mysql
+    - php7.0-cli
+    - php7.0-mbstring
+
+- name: Create database
+  mysql_db:
+    name: mantis
+    state: present
+
+- include_vars: users.yml
+
+- name: Create database user
+  mysql_user:
+    name: "{{ mariadb_mantis_user }}"
+    password: "{{ mariadb_mantis_pass }}"
+    state: present
+    priv: "mantis.*:ALL"
+
+- name: Creating mantis directory
+  file:
+    path: "/var/www/html/mantis"
+    state: directory
+
+- name: Downloading mantis
+  unarchive:
+    src: "https://excellmedia.dl.sourceforge.net/project/mantisbt/mantis-stable/2.4.0/mantisbt-2.4.0.zip"
+    dest: "/var/www/html/mantis"
+    creates: "/var/www/html/mantis/mantisbt-2.4.0"
+    remote_src: yes
+
+- name: Copy apache port configuration
+  template:
+    src: "ports.conf.j2"
+    dest: "/etc/apache2/ports.conf"
+
+- name: Copy apache configuration
+  copy:
+    src: "apache2.conf"
+    dest: "/etc/apache2/apache2.conf"
+
+- name: Copy site configuration
+  template:
+    src: "000-default.conf.j2"
+    dest: "/etc/apache2/sites-enabled/000-default.conf"
+
+- name: Restart apache2
+  service:
+    name: apache2
+    state: restarted
+    enabled: yes
+

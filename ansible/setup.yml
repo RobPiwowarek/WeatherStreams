@@ -16,6 +16,8 @@
     - jenkins
     - nexus
     - java
+    - mariadb
+    - mantis
 
 - hosts: dbservers
   become: yes
