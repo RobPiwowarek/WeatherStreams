@@ -27,10 +27,23 @@
     - php7.0-cli
     - php7.0-mbstring
 
+- name: Check if mantis database exists
+  shell: mysql -e 'SHOW DATABASES;' | grep mantis
+  register: mantis_db_status
+  failed_when: mantis_db_status.stdout_lines.count == 2
+
+- name: Transfer database schema
+  copy:
+    src: schema.sql
+    dest: /tmp/schema.sql
+  when: mantis_db_status.stdout_lines.count == 0
+
 - name: Create database
   mysql_db:
     name: mantis
-    state: present
+    state: import
+    target: /tmp/schema.sql
+  when: mantis_db_status.stdout_lines.count == 0
 
 - include_vars: users.yml
 
@@ -46,12 +59,22 @@
     path: "/var/www/html/mantis"
     state: directory
 
+- name: Install unzip
+  apt:
+    name: unzip
+    state: present
+
 - name: Downloading mantis
   unarchive:
     src: "https://excellmedia.dl.sourceforge.net/project/mantisbt/mantis-stable/2.4.0/mantisbt-2.4.0.zip"
     dest: "/var/www/html/mantis"
     creates: "/var/www/html/mantis/mantisbt-2.4.0"
     remote_src: yes
+
+- name: Setup mantis configuration
+  template:
+    src: "config_inc.php.j2"
+    dest: "/var/www/html/mantis/mantisbt-2.4.0/config/config_inc.php"
 
 - name: Copy apache port configuration
   template:
