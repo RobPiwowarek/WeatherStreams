@@ -67,3 +67,4 @@ import {ConfigComponent} from './config/config.component';
   bootstrap: [AppComponent]
 })
 export class AppModule {}
+
