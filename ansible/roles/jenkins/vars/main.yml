@@ -1,2 +1,12 @@
 ---
-# vars file for jenkins
+jenkins_plugins_apt_requirements:
+ - nodejs
+ - npm
+jenkins_plugins_npm_requirements:
+ - karma
+jenkins_plugins:
+ - nexus-artifact-uploader
+ - sbt
+ - git
+ - scoverage
+ - junit

@@ -21,11 +21,13 @@
 - name: Install php
   apt:
     name: "{{ item }}"
+    state: present
   with_items:
     - php7.0
     - php7.0-mysql
     - php7.0-cli
     - php7.0-mbstring
+    - sendmail
 
 - name: Check if mantis database exists
   shell: mysql -e 'SHOW DATABASES;' | grep mantis
