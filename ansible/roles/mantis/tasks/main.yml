@@ -27,16 +27,23 @@
     - php7.0-cli
     - php7.0-mbstring
 
+- name: Check if mantis database exists
+  shell: mysql -e 'SHOW DATABASES;' | grep mantis
+  register: mantis_db_status
+  failed_when: mantis_db_status.stdout_lines.count == 2
+
 - name: Transfer database schema
   copy:
     src: schema.sql
     dest: /tmp/schema.sql
+  when: mantis_db_status.stdout_lines.count == 0
 
 - name: Create database
   mysql_db:
     name: mantis
     state: import
     target: /tmp/schema.sql
+  when: mantis_db_status.stdout_lines.count == 0
 
 - include_vars: users.yml
 
@@ -51,6 +58,11 @@
   file:
     path: "/var/www/html/mantis"
     state: directory
+
+- name: Install unzip
+  apt:
+    name: unzip
+    state: present
 
 - name: Downloading mantis
   unarchive:
