@@ -17,15 +17,15 @@ object AkkaStreamsHelloWorld extends App {
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val ec: ExecutionContextExecutor = system.dispatcher
 
-  val done = source.runForeach(i ⇒ println(i))(materializer)
-
-  done.onComplete(_ => system.terminate)
-
   val factorials = source.scan(BigInt(1))((acc, next) ⇒ acc * next)
 
   val result: Future[IOResult] =
     factorials
       .map(num ⇒ ByteString(s"$num\n"))
       .runWith(FileIO.toPath(Paths.get("factorials.txt")))
+
+
+  result.onComplete(_ => system.terminate)
+
 
 }
