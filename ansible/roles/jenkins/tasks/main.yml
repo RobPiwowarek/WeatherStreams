@@ -26,3 +26,28 @@
     name: jenkins
     state: restarted
     enabled: yes
+
+- name: Installing jenkins plugins requirements (apt)
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items: "{{ jenkins_plugins_apt_requirements }}"
+
+- name: Installing jenkins plugins requirements (npm)
+  npm:
+    name: "{{ item }}"
+    global: yes
+    state: present
+  with_items: "{{ jenkins_plugins_npm_requirements }}"
+
+- include_vars: users.yml
+
+- name: Adding jenkins plugins
+  jenkins_plugin:
+    name: "{{ item }}"
+    params: "{{ jenkins_params }}"
+    url_password: "{{ jenkins_password }}"
+    state: present
+    owner: root
+  with_items: "{{ jenkins_plugins }}"
