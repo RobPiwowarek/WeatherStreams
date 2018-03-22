@@ -15,3 +15,13 @@ libraryDependencies := Seq(
   "com.github.tomakehurst" % "wiremock-standalone" % "2.15.0" % Test,
   "org.scalacheck" %% "scalacheck" % "1.13.5" % Test // for some reason scalatest requires it even if not used
 )
+
+publishTo := {
+  val nexus = "http://localhost:8081"
+  if (isSnapshot.value)
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  else
+    Some("releases"  at nexus + "service/local/staging/deploy/maven2" )
+}
+
+credentials += Credentials("Some Nexus Repository Manager", "localhost:8081", "admin", "admin123")
