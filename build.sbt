@@ -17,7 +17,7 @@ libraryDependencies := Seq(
 )
 
 publishTo := {
-  val nexus = "http://localhost:8081"
+  val nexus = "http://localhost:8081/"
   if (isSnapshot.value)
     Some("snapshots" at nexus + "content/repositories/snapshots")
   else
