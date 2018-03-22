@@ -1,1 +1,1 @@
-Weather data streams project for PIK classes at WUT
+Weather data streams project for PIK classes at WUT. Jupi!!!
