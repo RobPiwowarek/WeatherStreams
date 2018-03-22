@@ -19,9 +19,13 @@ libraryDependencies := Seq(
 publishTo := {
   val nexus = "http://localhost:8081/"
   if (isSnapshot.value)
-    Some("snapshots" at nexus + "content/repositories/snapshots")
+    Some("snapshots" at nexus + "/repository/maven-snapshots")
   else
-    Some("releases"  at nexus + "content/repositories/releases" )
+    Some("releases"  at nexus + "/repository/maven-releases" )
 }
 
 credentials += Credentials("Sonatype Nexus Repository Manager", "localhost", "admin", "admin123")
+
+resolvers += "My Nexus" at "http://localhost:8081/"
+
+externalResolvers := Resolver.combineDefaultResolvers(resolvers.value.toVector, false)
