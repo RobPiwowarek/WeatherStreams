@@ -19,13 +19,13 @@ libraryDependencies ++= Seq(
 publishTo := {
   val nexus = "http://localhost:8081/"
   if (isSnapshot.value)
-    Some("snapshots" at nexus + "/repository/maven-snapshots")
+    Some("snapshots" at nexus + "/repository/weatherstreams-snapshots")
   else
-    Some("releases"  at nexus + "/repository/maven-releases" )
+    Some("releases"  at nexus + "/repository/weatherstreams-release" )
 }
 
 credentials += Credentials("Sonatype Nexus Repository Manager", "localhost", "admin", "admin123")
 
-resolvers += "My Nexus" at "http://localhost:8081/"
+resolvers += "My Nexus" at "http://localhost:8081/repository/weatherstreams-group"
 
 externalResolvers := Resolver.combineDefaultResolvers(resolvers.value.toVector, false)
