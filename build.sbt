@@ -15,17 +15,3 @@ libraryDependencies ++= Seq(
   "com.github.tomakehurst" % "wiremock-standalone" % "2.15.0" % Test,
   "org.scalacheck" %% "scalacheck" % "1.13.5" % Test // for some reason scalatest requires it even if not used
 )
-
-publishTo := {
-  val nexus = "http://localhost:8081/"
-  if (isSnapshot.value)
-    Some("snapshots" at nexus + "/repository/maven-snapshots")
-  else
-    Some("releases"  at nexus + "/repository/maven-releases" )
-}
-
-credentials += Credentials("Sonatype Nexus Repository Manager", "localhost", "admin", "admin123")
-
-resolvers += "My Nexus" at "http://localhost:8081/"
-
-externalResolvers := Resolver.combineDefaultResolvers(resolvers.value.toVector, false)
