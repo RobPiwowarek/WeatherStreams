@@ -2,49 +2,49 @@ package server
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.stream.ActorMaterializer
-import akka.http.scaladsl.Http._
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
+import akka.stream.ActorMaterializer
 import domain.requests.{AlertRequest, LoginRequest, UserRequest}
 
-object WebServer extends JsonSupport {
+object WebServer extends JsonSupport with CorsSupport {
   implicit val system = ActorSystem()
   implicit val materializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
 
   def main(args: Array[String]): Unit = {
     val route: Route =
-      akka.http.scaladsl.server.directives.MethodDirectives.get {
-        complete("dupa")
-      } ~
-      put {
-        pathPrefix("alert") {
-          entity(as[AlertRequest]) {
-            request =>
-              handleAlertRequest(request)
-          }
-        }
-      } ~
+      ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors() {
         put {
-          pathPrefix("user") {
-            entity(as[UserRequest]) {
+          pathPrefix("alert") {
+            entity(as[AlertRequest]) {
               request =>
-                handleUserRequest(request)
+                handleAlertRequest(request)
             }
           }
         } ~
-        post {
-          pathPrefix("login") {
-            entity(as[LoginRequest]) {
-              request =>
-                handleLoginRequest(request)
+          put {
+            pathPrefix("user") {
+              entity(as[UserRequest]) {
+                request =>
+                  handleUserRequest(request)
+              }
+            }
+          } ~
+          post {
+            pathPrefix("login") {
+              entity(as[LoginRequest]) {
+                request =>
+                  handleLoginRequest(request)
+              }
             }
           }
-        }
+      }
 
-    val bindingFuture = Http().bindAndHandle(route, "localhost", 8090)
+    val corsSupportedRoute = corsSupport(route)
+
+    val bindingFuture = Http().bindAndHandle(corsSupportedRoute, "localhost", 8090)
   }
 
   // todo:
