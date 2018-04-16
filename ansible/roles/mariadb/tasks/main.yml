@@ -45,3 +45,10 @@
     password: "{{ mariadb_user_password }}"
     priv: '*.*:ALL'
     state: present
+
+- name: Add weather user
+  mysql_user:
+    name: "{{ mariadb_weather_name }}"
+    password: "{{ mariadb_weather_password }}"
+    priv: '*.*:ALL'
+    state: present
