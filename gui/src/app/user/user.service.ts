@@ -11,7 +11,7 @@ export class UserService {
   public errorMessage = '';
   private username = '';
   private loggedIn = false;
-  private baseUrl = 'http://localhost:8080/api/user/';
+  private baseUrl = 'http://localhost:8090/api/user/';
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
