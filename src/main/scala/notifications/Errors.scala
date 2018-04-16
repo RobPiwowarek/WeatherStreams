@@ -13,8 +13,6 @@ object Errors {
 
   case class AuthorizationError(message: String) extends Throwable with NotificationError
 
-  case class ParseError(message: String) extends Throwable with NotificationError
-
   case class TargetError(message: String) extends Throwable with NotificationError
 
   case class InternalError(message: String) extends Throwable with NotificationError

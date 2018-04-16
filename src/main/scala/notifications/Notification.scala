@@ -1,7 +1,7 @@
 package notifications
 
 sealed trait Notification {
-  val alert: String
+  val alert: String // todo - different parameters for different alert conditions
   val user: String
 
   val title = "Weather Streams Alert"

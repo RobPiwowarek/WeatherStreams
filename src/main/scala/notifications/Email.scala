@@ -9,12 +9,15 @@ import javax.mail.internet.{InternetAddress, MimeMessage}
 import notifications.Errors.{AuthorizationError, TargetError, InternalError}
 
 class Email extends Actor {
+  // change config in src/main/resources/reference.conf
+  // or in src/main/resources/application.conf (will override reference.conf)
   val conf = ConfigFactory.load()
   val login = conf.getString("email.login")
   val from = login
   val password = conf.getString("email.password")
   val host = conf.getString("email.host")
   val port = conf.getString("email.port")
+  val timeout = conf.getString("email.timeout") //ms
 
 
   def createMessage(to: String, subject: String, content: String): Message = {
@@ -24,8 +27,8 @@ class Email extends Actor {
     properties.put("mail.smtp.port", port)
     properties.put("mail.smtp.auth", "true")
     properties.put("mail.smtp.starttls.enable", "true")
-    properties.put("mail.smtp.connectiontimeout", "10000")
-    properties.put("mail.smtp.timeout", "10000")
+    properties.put("mail.smtp.connectiontimeout", timeout)
+    properties.put("mail.smtp.timeout", timeout)
 
     val authenticator = new Authenticator() {
       override def getPasswordAuthentication = new

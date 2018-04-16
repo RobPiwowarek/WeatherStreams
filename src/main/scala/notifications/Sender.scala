@@ -4,10 +4,12 @@ import akka.actor.{Actor, ActorRef, Props}
 
 import language.postfixOps
 
+// use this Actor to send out notifications
+// it will choose the right sender for the notification type
 class Sender extends Actor {
   val emailSender: ActorRef = context.actorOf(Props[Email], name="EmailSender")
 
-  // wybierze odp. sendera, na razie tylko email
+  // only email rn
   def receive = {
     case email: EmailNotification => emailSender ! email
     case generic: Notification => print(generic.toString()) // debug
