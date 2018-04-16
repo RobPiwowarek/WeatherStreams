@@ -1,6 +1,7 @@
 package server
 
 import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.Http._
 import akka.http.scaladsl.model.StatusCodes
@@ -15,6 +16,9 @@ object WebServer extends JsonSupport {
 
   def main(args: Array[String]): Unit = {
     val route: Route =
+      akka.http.scaladsl.server.directives.MethodDirectives.get {
+        complete("dupa")
+      } ~
       put {
         pathPrefix("alert") {
           entity(as[AlertRequest]) {
@@ -39,6 +43,8 @@ object WebServer extends JsonSupport {
             }
           }
         }
+
+    val bindingFuture = Http().bindAndHandle(route, "localhost", 8090)
   }
 
   // todo:
