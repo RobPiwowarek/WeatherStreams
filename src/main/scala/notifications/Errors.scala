@@ -1,11 +1,11 @@
 package notifications
 
-import javax.mail.AuthenticationFailedException
-import javax.mail.internet.ParseException
 
 object Errors {
+
   sealed trait NotificationError {
     val message: String
+
     override def toString = s"Notification ${this.getClass.getSimpleName}: " + message
   }
 
@@ -16,5 +16,6 @@ object Errors {
   case class TargetError(message: String) extends Throwable with NotificationError
 
   case class InternalError(message: String) extends Throwable with NotificationError
+
 }
 

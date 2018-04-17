@@ -7,7 +7,7 @@ import language.postfixOps
 // use this Actor to send out notifications
 // it will choose the right sender for the notification type
 class Sender extends Actor {
-  val emailSender: ActorRef = context.actorOf(Props[Email], name="EmailSender")
+  val emailSender: ActorRef = context.actorOf(Props[Email], name = "EmailSender")
 
   // only email rn
   def receive = {
