@@ -11,7 +11,9 @@ class Sender extends Actor {
 
   // only email rn
   def receive = {
-    case email: EmailNotification => emailSender ! email
-    case generic: Notification => print(generic.toString()) // debug
+    case email: EmailNotification =>
+      emailSender ! email
+    case generic: Notification =>
+      print(generic.toString()) // debug
   }
 }
