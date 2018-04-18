@@ -8,7 +8,16 @@ import javax.mail._
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import notifications.Errors.{AuthorizationError, InternalError, TargetError}
 
-class Email extends Actor {
+sealed trait EmailConfig {
+  val login: String
+  val from: String
+  val password: String
+  val host: String
+  val port: String
+  val timeout: String
+}
+
+object AutoFileConfig extends EmailConfig {
   // change config in src/main/resources/reference.conf
   // or in src/main/resources/application.conf (will override reference.conf)
   val conf = ConfigFactory.load()
@@ -18,26 +27,27 @@ class Email extends Actor {
   val host = conf.getString("email.host")
   val port = conf.getString("email.port")
   val timeout = conf.getString("email.timeout") //ms
+}
 
-
+class Email(conf: EmailConfig) extends Actor {
   def createMessage(to: String, subject: String, content: String): Message = {
     val properties = new Properties()
     properties.put("mail.transport.protocol", "smtp")
-    properties.put("mail.smtp.host", host)
-    properties.put("mail.smtp.port", port)
+    properties.put("mail.smtp.host", conf.host)
+    properties.put("mail.smtp.port", conf.port)
     properties.put("mail.smtp.auth", "true")
     properties.put("mail.smtp.starttls.enable", "true")
-    properties.put("mail.smtp.connectiontimeout", timeout)
-    properties.put("mail.smtp.timeout", timeout)
+    properties.put("mail.smtp.connectiontimeout", conf.timeout)
+    properties.put("mail.smtp.timeout", conf.timeout)
 
     val authenticator = new Authenticator() {
       override def getPasswordAuthentication = new
-          PasswordAuthentication(login, password)
+          PasswordAuthentication(conf.login, conf.password)
     }
 
     val session = Session.getInstance(properties, authenticator)
     val message = new MimeMessage(session)
-    message.setFrom(new InternetAddress(from))
+    message.setFrom(new InternetAddress(conf.from))
     message.setRecipient(Message.RecipientType.TO, new InternetAddress(to))
     message.setSubject(subject)
     message.setText(content)
