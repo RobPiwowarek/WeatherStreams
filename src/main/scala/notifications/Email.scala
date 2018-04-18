@@ -2,11 +2,11 @@ package notifications
 
 import java.util.{Date, Properties}
 
-import com.typesafe.config._
 import akka.actor.Actor
+import com.typesafe.config._
 import javax.mail._
 import javax.mail.internet.{InternetAddress, MimeMessage}
-import notifications.Errors.{AuthorizationError, TargetError, InternalError}
+import notifications.Errors.{AuthorizationError, InternalError, TargetError}
 
 class Email extends Actor {
   // change config in src/main/resources/reference.conf
@@ -52,14 +52,19 @@ class Email extends Actor {
       Transport.send(message)
     }
     catch {
-      case e: AuthenticationFailedException => throw new AuthorizationError(e.getMessage)
-      case e: SendFailedException => throw new TargetError(e.getMessage)
-      case e: MessagingException => throw new InternalError(e.getMessage)
-      case e: Throwable => throw new InternalError(e.toString)
+      case e: AuthenticationFailedException =>
+        throw new AuthorizationError(e.getMessage)
+      case e: SendFailedException =>
+        throw new TargetError(e.getMessage)
+      case e: MessagingException =>
+        throw new InternalError(e.getMessage)
+      case e: Throwable =>
+        throw new InternalError(e.toString)
     }
   }
 
   def receive = {
-    case e: EmailNotification => sendMessage(e.email, e.title, e.toString())
+    case e: EmailNotification =>
+      sendMessage(e.email, e.title, e.toString())
   }
 }

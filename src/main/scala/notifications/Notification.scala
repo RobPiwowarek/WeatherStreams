@@ -6,10 +6,15 @@ sealed trait Notification {
 
   val title = "Weather Streams Alert"
 
-  override def toString = s"Hi $user!\n\n" +
-    s"You are receiving this notification because conditions for one of your alerts were met:\n" +
-    s"$alert\n\n" +
-    s"Best regards,\nWeather Streams"
+  override def toString =
+    s"""
+       | Hi $user!\n\n
+       | You are receiving this notification because conditions for one of your alerts were met:\n" +
+       | $alert\n\n
+       | Best regards,\nWeather Streams
+    """.stripMargin
 }
 
-case class EmailNotification(override val user: String, email: String, override val alert: String) extends Notification {}
+case class EmailNotification(override val user: String,
+                             email: String,
+                             override val alert: String) extends Notification {}

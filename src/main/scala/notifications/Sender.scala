@@ -2,7 +2,7 @@ package notifications
 
 import akka.actor.{Actor, ActorRef, Props}
 
-import language.postfixOps
+import scala.language.postfixOps
 
 // use this Actor to send out notifications
 // it will choose the right sender for the notification type

@@ -14,7 +14,6 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.3.2",
   "com.sun.mail" % "javax.mail" % "1.6.1",
 
-
   "org.scalatest" %% "scalatest" % "3.2.0-SNAP10" % Test,
   "com.github.tomakehurst" % "wiremock-standalone" % "2.15.0" % Test,
   "org.scalacheck" %% "scalacheck" % "1.13.5" % Test // for some reason scalatest requires it even if not used
