@@ -1,12 +1,13 @@
 package notifications
 
+import java.net.SocketTimeoutException
 import java.util.{Date, Properties}
 
 import akka.actor.Actor
 import com.typesafe.config._
 import javax.mail._
 import javax.mail.internet.{InternetAddress, MimeMessage}
-import notifications.Errors.{AuthorizationError, InternalError, TargetError}
+import notifications.Errors.{AuthorizationError, TimeoutError, InternalError, SendError}
 
 sealed trait EmailConfig {
   val login: String
@@ -65,7 +66,9 @@ class Email(conf: EmailConfig) extends Actor {
       case e: AuthenticationFailedException =>
         throw new AuthorizationError(e.getMessage)
       case e: SendFailedException =>
-        throw new TargetError(e.getMessage)
+        throw new SendError(e.getMessage)
+      case e: SocketTimeoutException =>
+        throw new TimeoutError(e.getMessage)
       case e: MessagingException =>
         throw new InternalError(e.getMessage)
       case e: Throwable =>
