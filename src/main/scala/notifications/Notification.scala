@@ -9,7 +9,7 @@ sealed trait Notification {
   override def toString =
     s"""
        | Hi $user!\n\n
-       | You are receiving this notification because conditions for one of your alerts were met:\n" +
+       | You are receiving this notification because conditions for one of your alerts were met:\n
        | $alert\n\n
        | Best regards,\nWeather Streams
     """.stripMargin
