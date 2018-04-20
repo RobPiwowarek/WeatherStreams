@@ -10,6 +10,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http"            % "10.1.0",
   "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.1",
   "ch.megard"         %% "akka-http-cors"       % "0.3.0",
+  "org.asynchttpclient"% "async-http-client"    % "2.4.5",
+  "com.netaporter"    %% "scala-uri"            % "0.4.16",
 
   "com.lightbend.akka" %% "akka-stream-alpakka-slick" % "0.17",
 
