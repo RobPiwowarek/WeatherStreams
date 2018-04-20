@@ -17,7 +17,7 @@ trait CorsSupport {
 
   val handleErrors = handleRejections(rejectionHandler) & handleExceptions(exceptionHandler)
 
-  val settings = CorsSettings.defaultSettings.withAllowGenericHttpRequests(false)
+  val settings = CorsSettings.defaultSettings.withAllowGenericHttpRequests(true)
 
   def corsSupport(route: Route): Route = {
     handleErrors {
