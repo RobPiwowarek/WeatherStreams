@@ -2,7 +2,7 @@ package server
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
@@ -50,23 +50,23 @@ object WebServer extends JsonSupport with CorsSupport {
 
     val corsSupportedRoute = corsSupport(route)
 
-    Http().bindAndHandle(corsSupportedRoute, "localhost", 8090)
+    Http().bindAndHandle(corsSupportedRoute, "0.0.0.0", 8090)
   }
 
   // todo:
   private def handleAlertRequest(request: AlertRequest) = {
-    complete(StatusCodes.OK)
+    complete(HttpResponse(StatusCodes.OK, entity = ""))
   }
 
   // todo:
   private def handleUserRequest(request: UserRegisterRequest) = {
-    complete(StatusCodes.OK)
+
+
+    complete(HttpResponse(StatusCodes.OK, entity = ""))
   }
 
   // todo:
   private def handleLoginRequest(request: UserLoginRequest) = {
-    
-
-    complete(StatusCodes.OK)
+    complete(HttpResponse(StatusCodes.OK, entity = ""))
   }
 }
