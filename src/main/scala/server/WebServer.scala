@@ -17,14 +17,26 @@ object WebServer extends JsonSupport with CorsSupport {
   def main(args: Array[String]): Unit = {
     val route: Route =
       cors() {
-        put {
-          pathPrefix("alert") {
-            entity(as[AlertRequest]) {
-              request =>
-                handleAlertRequest(request)
+        post {
+          pathPrefix("api") {
+            pathPrefix("user") {
+              pathPrefix("login") {
+                entity(as[UserLoginRequest]) {
+                  request =>
+                    handleLoginRequest(request)
+                }
+              }
             }
           }
         } ~
+          put {
+            pathPrefix("alert") {
+              entity(as[AlertRequest]) {
+                request =>
+                  handleAlertRequest(request)
+              }
+            }
+          } ~
           put {
             pathPrefix("user") {
               entity(as[UserRegisterRequest]) {
@@ -32,15 +44,8 @@ object WebServer extends JsonSupport with CorsSupport {
                   handleUserRequest(request)
               }
             }
-          } ~
-          post {
-            pathPrefix("api/user/login") {
-              entity(as[UserLoginRequest]) {
-                request =>
-                  handleLoginRequest(request)
-              }
-            }
           }
+
       }
 
     val corsSupportedRoute = corsSupport(route)

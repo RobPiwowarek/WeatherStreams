@@ -14,7 +14,7 @@ object MariaDb {
   val databaseConfig = DatabaseConfig.forConfig[MySQLProfile]("maria-db")
   val db = databaseConfig.db
 
-  private class UsersTable(tag: Tag) extends Table[(Long, String, String, String, String, String)](tag, "users") {
+  class UsersTable(tag: Tag) extends Table[(Long, String, String, String, String, String)](tag, "users") {
     def id =  column[Long]("ID", O.PrimaryKey, O.AutoInc)
     def name = column[String]("NAME")
     def surname = column[String]("SURNAME")
