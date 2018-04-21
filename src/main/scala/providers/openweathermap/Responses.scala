@@ -38,4 +38,5 @@ object Responses {
   case class Snow(lastThreeHours: Option[BigDecimal])
 
   case class Rain(lastThreeHours: Option[BigDecimal])
+
 }

@@ -6,7 +6,8 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
-import domain.requests.{AlertRequest, LoginRequest, UserRequest}
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
+import domain.requests.{AlertRequest, UserLoginRequest, UserRegisterRequest}
 
 object WebServer extends JsonSupport with CorsSupport {
   implicit val system = ActorSystem()
@@ -15,7 +16,7 @@ object WebServer extends JsonSupport with CorsSupport {
 
   def main(args: Array[String]): Unit = {
     val route: Route =
-      ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors() {
+      cors() {
         put {
           pathPrefix("alert") {
             entity(as[AlertRequest]) {
@@ -26,7 +27,7 @@ object WebServer extends JsonSupport with CorsSupport {
         } ~
           put {
             pathPrefix("user") {
-              entity(as[UserRequest]) {
+              entity(as[UserRegisterRequest]) {
                 request =>
                   handleUserRequest(request)
               }
@@ -34,7 +35,7 @@ object WebServer extends JsonSupport with CorsSupport {
           } ~
           post {
             pathPrefix("login") {
-              entity(as[LoginRequest]) {
+              entity(as[UserLoginRequest]) {
                 request =>
                   handleLoginRequest(request)
               }
@@ -44,7 +45,7 @@ object WebServer extends JsonSupport with CorsSupport {
 
     val corsSupportedRoute = corsSupport(route)
 
-    val bindingFuture = Http().bindAndHandle(corsSupportedRoute, "localhost", 8090)
+    Http().bindAndHandle(corsSupportedRoute, "localhost", 8090)
   }
 
   // todo:
@@ -53,12 +54,14 @@ object WebServer extends JsonSupport with CorsSupport {
   }
 
   // todo:
-  private def handleUserRequest(request: UserRequest) = {
+  private def handleUserRequest(request: UserRegisterRequest) = {
+
+
     complete(StatusCodes.OK)
   }
 
   // todo:
-  private def handleLoginRequest(request: LoginRequest) = {
+  private def handleLoginRequest(request: UserLoginRequest) = {
     complete(StatusCodes.OK)
   }
 }
