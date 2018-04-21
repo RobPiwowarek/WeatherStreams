@@ -34,7 +34,7 @@ object WebServer extends JsonSupport with CorsSupport {
             }
           } ~
           post {
-            pathPrefix("login") {
+            pathPrefix("api/user/login") {
               entity(as[UserLoginRequest]) {
                 request =>
                   handleLoginRequest(request)
