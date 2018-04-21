@@ -6,6 +6,8 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
+import ch.megard.akka.http.cors.scaladsl.settings.CorsSettings
 import domain.requests.{AlertRequest, LoginRequest, UserRequest}
 
 object WebServer extends JsonSupport with CorsSupport {
@@ -15,7 +17,7 @@ object WebServer extends JsonSupport with CorsSupport {
 
   def main(args: Array[String]): Unit = {
     val route: Route =
-      ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors() {
+      cors() {
         put {
           pathPrefix("alert") {
             entity(as[AlertRequest]) {
@@ -44,7 +46,7 @@ object WebServer extends JsonSupport with CorsSupport {
 
     val corsSupportedRoute = corsSupport(route)
 
-    val bindingFuture = Http().bindAndHandle(corsSupportedRoute, "localhost", 8090)
+    Http().bindAndHandle(corsSupportedRoute, "localhost", 8090)
   }
 
   // todo:
