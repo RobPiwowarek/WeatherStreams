@@ -1,8 +1,10 @@
 package providers.openweathermap
 
 object Errors {
+
   sealed trait WeatherError {
     val message: String
+
     override def toString = s"OpenWeatherMap ${this.getClass.getSimpleName} " + message
   }
 
@@ -11,4 +13,5 @@ object Errors {
   case class InternalError(message: String) extends WeatherError
 
   case class ParseError(message: String) extends WeatherError
+
 }

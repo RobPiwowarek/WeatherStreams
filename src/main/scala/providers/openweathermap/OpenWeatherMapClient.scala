@@ -14,9 +14,9 @@ object OpenWeatherMapClient {
   val httpClient = asyncHttpClient()
 
   def getWeatherData(params: Seq[(String, String)]) =
-    httpClient.prepareGet(weatherEndpoint.addParams(params)&("appid", apiKey)).execute()
+    httpClient.prepareGet(weatherEndpoint.addParams(params) & ("appid", apiKey)).execute()
 
   def getForecastData(params: Seq[(String, String)]) =
-    httpClient.prepareGet(forecastEndpoint.addParams(params)&("appid", apiKey)).execute()
+    httpClient.prepareGet(forecastEndpoint.addParams(params) & ("appid", apiKey)).execute()
 }
 

@@ -7,8 +7,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
-import ch.megard.akka.http.cors.scaladsl.settings.CorsSettings
-import domain.requests.{AlertRequest, LoginRequest, UserRequest}
+import domain.requests.{AlertRequest, UserLoginRequest, UserRegisterRequest}
 
 object WebServer extends JsonSupport with CorsSupport {
   implicit val system = ActorSystem()
@@ -28,7 +27,7 @@ object WebServer extends JsonSupport with CorsSupport {
         } ~
           put {
             pathPrefix("user") {
-              entity(as[UserRequest]) {
+              entity(as[UserRegisterRequest]) {
                 request =>
                   handleUserRequest(request)
               }
@@ -36,7 +35,7 @@ object WebServer extends JsonSupport with CorsSupport {
           } ~
           post {
             pathPrefix("login") {
-              entity(as[LoginRequest]) {
+              entity(as[UserLoginRequest]) {
                 request =>
                   handleLoginRequest(request)
               }
@@ -55,12 +54,14 @@ object WebServer extends JsonSupport with CorsSupport {
   }
 
   // todo:
-  private def handleUserRequest(request: UserRequest) = {
+  private def handleUserRequest(request: UserRegisterRequest) = {
+
+
     complete(StatusCodes.OK)
   }
 
   // todo:
-  private def handleLoginRequest(request: LoginRequest) = {
+  private def handleLoginRequest(request: UserLoginRequest) = {
     complete(StatusCodes.OK)
   }
 }

@@ -1,9 +1,9 @@
 import java.nio.file.Paths
 
 import akka.NotUsed
-import akka.stream.scaladsl.{FileIO, Source}
-import akka.stream._
 import akka.actor.ActorSystem
+import akka.stream._
+import akka.stream.scaladsl.{FileIO, Source}
 import akka.util.ByteString
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
