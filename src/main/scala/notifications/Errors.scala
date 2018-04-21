@@ -16,4 +16,5 @@ object Errors {
   case class SendError(message: String) extends Throwable with NotificationError
 
   case class InternalError(message: String) extends Throwable with NotificationError
+
 }

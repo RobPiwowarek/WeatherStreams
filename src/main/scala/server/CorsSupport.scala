@@ -1,9 +1,9 @@
 package server
 
 import akka.http.scaladsl.model.StatusCodes
-import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, RejectionHandler, Route}
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import ch.megard.akka.http.cors.scaladsl.settings.CorsSettings
 
 trait CorsSupport {
