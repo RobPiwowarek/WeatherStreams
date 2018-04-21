@@ -32,6 +32,8 @@ object MariaDb {
     } finally db.close
   }
 
+
+
 }
 
 case class User(id: Long,
