@@ -8,6 +8,7 @@ import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import domain.requests.{AlertRequest, UserLoginRequest, UserRegisterRequest}
+import server.database.MariaDb
 
 object WebServer extends JsonSupport with CorsSupport {
   implicit val system = ActorSystem()
@@ -60,13 +61,19 @@ object WebServer extends JsonSupport with CorsSupport {
 
   // todo:
   private def handleUserRequest(request: UserRegisterRequest) = {
-
-
     complete(HttpResponse(StatusCodes.OK, entity = ""))
   }
 
   // todo:
   private def handleLoginRequest(request: UserLoginRequest) = {
-    complete(HttpResponse(StatusCodes.OK, entity = ""))
+    MariaDb.selectUser(request) match {
+      case Some(user) =>
+        if (user.password.equals(request.password.value))
+          complete(HttpResponse(StatusCodes.OK, entity = ""))
+        else
+          complete(HttpResponse(StatusCodes.Unauthorized, entity = ""))
+      case None =>
+        complete(HttpResponse(StatusCodes.Unauthorized, entity = ""))
+    }
   }
 }
