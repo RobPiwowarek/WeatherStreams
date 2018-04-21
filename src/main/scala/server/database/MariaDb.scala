@@ -36,13 +36,7 @@ object MariaDb {
   def insert(user: UserRegisterRequest) = {
     try {
       Await.result(db.run(DBIO.seq(
-        users += User(
-          1,
-          user.name.value,
-          user.surname.value,
-          user.slackId.map(_.value).getOrElse(""),
-          user.password.value,
-          user.email.value))), Duration.Inf)
+        users += user)), Duration.Inf)
     } finally db.close
   }
 
@@ -56,6 +50,14 @@ object MariaDb {
         .map(x => User(x.id, x.email, x.password, x.slackId, x.name, x.surname))
     } finally db.close
   }
+
+  implicit def userRegisterRequestToUser(userRequest: UserRegisterRequest): User =
+    User(1,
+      userRequest.name.value,
+      userRequest.surname.value,
+      userRequest.slackId.map(_.value).getOrElse(""),
+      userRequest.password.value,
+      userRequest.email.value)
 }
 
 case class User(id: Long,
