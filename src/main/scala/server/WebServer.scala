@@ -60,13 +60,13 @@ object WebServer extends JsonSupport with CorsSupport {
 
   // todo:
   private def handleUserRequest(request: UserRegisterRequest) = {
-
-
     complete(StatusCodes.OK)
   }
 
   // todo:
   private def handleLoginRequest(request: UserLoginRequest) = {
+    
+
     complete(StatusCodes.OK)
   }
 }
