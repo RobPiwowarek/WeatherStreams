@@ -50,7 +50,7 @@ object WebServer extends JsonSupport with CorsSupport {
 
     val corsSupportedRoute = corsSupport(route)
 
-    Http().bindAndHandle(corsSupportedRoute, "localhost", 8090)
+    Http().bindAndHandle(corsSupportedRoute, "0.0.0.0", 8090)
   }
 
   // todo:
