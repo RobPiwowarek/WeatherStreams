@@ -6,6 +6,16 @@ scalaVersion := "2.12.4"
 
 retrieveManaged := true
 
+mainClass in assembly := Some("server.WebServer")
+
+test in assembly := {}
+
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard // needed to avoid deduplicate errors
+  case PathList("reference.conf") => MergeStrategy.concat // needed for akka config files
+  case x => MergeStrategy.first
+}
+
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor"           % "2.5.11",
   "com.typesafe.akka" %% "akka-stream"          % "2.5.11",
