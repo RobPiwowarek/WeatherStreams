@@ -13,6 +13,7 @@ object MariaDb {
   val databaseConfig = DatabaseConfig.forConfig[MySQLProfile]("maria-db")
   val db = databaseConfig.db
 
+
   class UsersTable(tag: Tag) extends Table[User](tag, "WEATHER_USER") {
     def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
 
