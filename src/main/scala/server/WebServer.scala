@@ -1,6 +1,6 @@
 package server
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives._
@@ -20,7 +20,7 @@ object WebServer extends JsonSupport with CorsSupport {
 
   val weatherClient: WeatherClient = OpenWeatherMapClient
 
-  val notificationSender: Sender = new Sender(AutoFileConfig)
+  val notificationSender: ActorRef = system.actorOf(Props(classOf[Sender], AutoFileConfig), name = "NotificationSender")
 
   def main(args: Array[String]): Unit = {
     val route: Route =
@@ -89,6 +89,6 @@ object WebServer extends JsonSupport with CorsSupport {
    val body = weatherClient.getWeatherData(Seq(("city", "London")))
       .getResponseBody
 
-    notificationSender.receive(EmailNotification("user", request.username.value, body))
+    notificationSender ! EmailNotification("user", request.username.value, body)
   }
 }
