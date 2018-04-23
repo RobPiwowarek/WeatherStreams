@@ -8,7 +8,7 @@ import providers.WeatherClient
 object OpenWeatherMapClient extends WeatherClient{
   implicit val apiKey = ApiKey("84ab538642f8529e836220e3232f7940")
 
-  val endpointBase = Uri.parse("api.openweathermap.org/data/2.5")
+  val endpointBase = Uri.parse("http://api.openweathermap.org/data/2.5")
   val weatherEndpoint = endpointBase / "weather"
   val forecastEndpoint = endpointBase / "forecast"
 
