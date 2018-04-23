@@ -6,13 +6,12 @@ import slick.jdbc.MySQLProfile
 import slick.jdbc.MySQLProfile.api._
 
 import scala.concurrent.Await
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 
 object MariaDb {
 
   val databaseConfig = DatabaseConfig.forConfig[MySQLProfile]("maria-db")
   val db = databaseConfig.db
-
 
   class UsersTable(tag: Tag) extends Table[User](tag, "WEATHER_USER") {
     def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
@@ -32,25 +31,21 @@ object MariaDb {
 
   val users = TableQuery[UsersTable]
 
-
   // TODO: FIXME:
   def insert(user: UserRegisterRequest) = {
-    try {
-      Await.result(db.run(DBIO.seq(
-        users += user)), Duration.Inf)
-    } finally db.close
+    Await.result(db.run(DBIO.seq(
+      users += user)), 10 seconds)
   }
 
   def selectUser(userLoginRequest: UserLoginRequest): Option[User] = {
-    try {
-      Await.result(
-        db.run(users
-          .withFilter(_.email === userLoginRequest.username.value)
-          .result), Duration.Inf)
-        .headOption
-        .map(x => User(x.id, x.email, x.password, x.slackId, x.name, x.surname))
-    } finally db.close
+    Await.result(
+      db.run(users
+        .filter(_.email >= userLoginRequest.username.value).result), 10 seconds)
+      .headOption
+      .map(x => User(x.id, x.email, x.password, x.slackId, x.name, x.surname))
   }
+
+  def close() = db.close
 
   implicit def userRegisterRequestToUser(userRequest: UserRegisterRequest): User =
     User(1,

@@ -8,12 +8,19 @@ import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import domain.requests.{AlertRequest, UserLoginRequest, UserRegisterRequest}
+import notifications.{AutoFileConfig, EmailNotification, Sender}
+import providers.WeatherClient
+import providers.openweathermap._
 import server.database.MariaDb
 
 object WebServer extends JsonSupport with CorsSupport {
   implicit val system = ActorSystem()
   implicit val materializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
+
+  val weatherClient: WeatherClient = OpenWeatherMapClient
+
+  val notificationSender: Sender = new Sender(AutoFileConfig)
 
   def main(args: Array[String]): Unit = {
     val route: Route =
@@ -46,7 +53,6 @@ object WebServer extends JsonSupport with CorsSupport {
               }
             }
           }
-
       }
 
     val corsSupportedRoute = corsSupport(route)
@@ -68,12 +74,21 @@ object WebServer extends JsonSupport with CorsSupport {
   private def handleLoginRequest(request: UserLoginRequest) = {
     MariaDb.selectUser(request) match {
       case Some(user) =>
-        if (user.password.equals(request.password.value))
+        if (user.password.equals(request.password.value)) {
+          sendMail(request)
           complete(HttpResponse(StatusCodes.OK, entity = ""))
+        }
         else
           complete(HttpResponse(StatusCodes.Unauthorized, entity = ""))
       case None =>
         complete(HttpResponse(StatusCodes.Unauthorized, entity = ""))
     }
+  }
+
+  private def sendMail(request: UserLoginRequest) = {
+   val body = weatherClient.getWeatherData(Seq(("city", "London")))
+      .getResponseBody
+
+    notificationSender.receive(EmailNotification("user", request.username.value, body))
   }
 }

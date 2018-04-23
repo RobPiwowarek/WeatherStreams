@@ -6,7 +6,6 @@ object Requests {
     def query(implicit apiKey: ApiKey)
   }
 
-
 }
 
 final case class ApiKey(value: String)

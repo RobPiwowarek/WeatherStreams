@@ -3,8 +3,9 @@ package providers.openweathermap
 import com.netaporter.uri.Uri
 import com.netaporter.uri.dsl._
 import org.asynchttpclient.Dsl._
+import providers.WeatherClient
 
-object OpenWeatherMapClient {
+object OpenWeatherMapClient extends WeatherClient{
   implicit val apiKey = ApiKey("84ab538642f8529e836220e3232f7940")
 
   val endpointBase = Uri.parse("api.openweathermap.org/data/2.5/")
@@ -13,10 +14,14 @@ object OpenWeatherMapClient {
 
   val httpClient = asyncHttpClient()
 
-  def getWeatherData(params: Seq[(String, String)]) =
-    httpClient.prepareGet(weatherEndpoint.addParams(params) & ("appid", apiKey)).execute()
+  def getWeatherData(params: Seq[(String, String)]) = {
+    val whenResponse = httpClient.prepareGet(weatherEndpoint.addParams(params) & ("appid", apiKey)).execute()
+    whenResponse.get
+  }
 
-  def getForecastData(params: Seq[(String, String)]) =
-    httpClient.prepareGet(forecastEndpoint.addParams(params) & ("appid", apiKey)).execute()
+  def getForecastData(params: Seq[(String, String)]) = {
+    val whenResponse = httpClient.prepareGet(forecastEndpoint.addParams(params) & ("appid", apiKey)).execute()
+    whenResponse.get
+  }
 }
 
