@@ -16,15 +16,15 @@ object MariaDb {
   class UsersTable(tag: Tag) extends Table[User](tag, "WEATHER_USER") {
     def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
 
-    def name = column[String]("NAME")
+    def name = column[String]("name")
 
-    def surname = column[String]("SURNAME")
+    def surname = column[String]("surname")
 
-    def slackId = column[String]("SLACK")
+    def slackId = column[String]("slack")
 
-    def password = column[String]("PASSWORD")
+    def password = column[String]("password")
 
-    def email = column[String]("EMAIL")
+    def email = column[String]("email")
 
     def * = (id, email, password, slackId, name, surname).mapTo[User]
   }

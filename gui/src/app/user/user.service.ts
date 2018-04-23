@@ -11,7 +11,7 @@ export class UserService {
   public errorMessage = '';
   private username = '';
   private loggedIn = false;
-  private baseUrl = 'http://localhost:8080/api/user/';
+  private baseUrl = 'http://localhost:8090/api/user/';
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -26,7 +26,7 @@ export class UserService {
     this.errorMessage = '';
     if (user) {
       this.sendLogin(user, password).subscribe(
-        u => this.processLogin(u),
+        u => this.processLogin(new User()),
         error => this.processLoginError(error)
       );
     } else {
@@ -37,7 +37,7 @@ export class UserService {
   }
 
   processLogin(user: User) {
-    this.username = user.usename;
+    this.username = user.username;
     this.loggedIn = true;
     this.logginSucceed.emit(true);
   }
@@ -61,10 +61,10 @@ export class UserService {
     return this.username;
   }
 
-  public sendLogin(user, password): Observable<User> {
+  public sendLogin(user, password): Observable<void> {
     const userLogin = new UserLogin();
-    userLogin.login = user;
-    userLogin.password = password;
-    return this.httpClient.post<User>(this.baseUrl + 'login', userLogin, this.httpOptions);
+    userLogin.username.value = user;
+    userLogin.password.value = password;
+    return this.httpClient.post<void>(this.baseUrl + 'login', userLogin, this.httpOptions);
   }
 }
