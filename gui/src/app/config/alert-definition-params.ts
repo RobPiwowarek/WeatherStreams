@@ -3,5 +3,5 @@ export class AlertDefinitionParameter {
   parameterName: string;
   parameterLimit: number;
   comparisonType: number;
-//  unit: string;
+  unit: string;
 }

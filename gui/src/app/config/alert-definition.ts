@@ -1,4 +1,4 @@
-import {AlertDefinitionParameter} from './aler-definition-params';
+import {AlertDefinitionParameter} from './alert-definition-params';
 export class AlertDefinition {
   id: number;
   userId: number;

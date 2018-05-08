@@ -95,30 +95,30 @@
 				            <td pEditableColumn>
 				                <p-cellEditor>
 				                    <ng-template pTemplate="input">
-										<p-dropdown [options]="effects" [(ngModel)]="rowData.parameterName"></p-dropdown>
+										<p-dropdown [options]="effects" [(ngModel)]="rowData.name"></p-dropdown>
 				                    </ng-template>
 				                    <ng-template pTemplate="output">
-				                        {{rowData.parameterName}}
+				                        {{rowData.name}}
 				                    </ng-template>
 				                </p-cellEditor>
 				            </td>
 				            <td pEditableColumn>
 				                <p-cellEditor>
 				                    <ng-template pTemplate="input">
-										<p-dropdown [options]="signs" [(ngModel)]="rowData.comparisonType"></p-dropdown>
+										<p-dropdown [options]="signs" [(ngModel)]="rowData.type"></p-dropdown>
 				                    </ng-template>
 				                    <ng-template pTemplate="output">
-				                        {{rowData.comparisonType}}
+				                        {{rowData.type}}
 				                    </ng-template>
 				                </p-cellEditor>
 				            </td>
 							<td pEditableColumn>
 				                <p-cellEditor>
 				                    <ng-template pTemplate="input">
-				                        <input type="text" [(ngModel)]="rowData.parameterLimit" required>
+				                        <input type="text" [(ngModel)]="rowData.limit" required>
 				                    </ng-template>
 				                    <ng-template pTemplate="output">
-				                        {{rowData.parameterLimit}}
+				                        {{rowData.limit}}
 				                    </ng-template>
 				                </p-cellEditor>
 				            </td>

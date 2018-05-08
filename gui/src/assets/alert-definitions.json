@@ -14,7 +14,7 @@
 		  	"id":1, 
 	  		"parameterName": "RAIN",
 	  		"parameterLimit": 10,
-	  		"comparisonType": 1
+	  		"comparisonType": 2
 		  }
 	  ] 
   },
@@ -33,19 +33,19 @@
 		  	"id":2, 
 	  		"parameterName": "TEMP",
 	  		"parameterLimit": 15,
-	  		"comparisonType": 1
+	  		"comparisonType": 2
 		  },
 		  {
 		  	"id":3, 
 	  		"parameterName": "TEMP",
 	  		"parameterLimit": 25,
-	  		"comparisonType": 2
+	  		"comparisonType": 1
 		  },
 		  {
 		  	"id":4, 
 	  		"parameterName": "WIND",
 	  		"parameterLimit": 10,
-	  		"comparisonType": 2
+	  		"comparisonType": 1
 		  }
 	  ]  
   },
@@ -63,8 +63,8 @@
 	  	  {
 		  	"id":5, 
 	  		"parameterName": "WIND",
-	  		"parameterLimit": 20,
-	  		"comparisonType": 1
+	  		"parameterLimit": 30,
+	  		"comparisonType": 2
 		  }	
 	  ] 
   },
@@ -83,7 +83,7 @@
 			"id":6, 
 	  		"parameterName": "TEMP",
 	  		"parameterLimit": 35,
-	  		"comparisonType": 1
+	  		"comparisonType": 2
 		  }
 	  ] 
   },
@@ -102,13 +102,13 @@
 		  	"id":7, 
 	  		"parameterName": "TEMP",
 	  		"parameterLimit": 10,
-	  		"comparisonType": 2
+	  		"comparisonType": 1
 		  },
 		  {
 		  	"id":8, 
 	  		"parameterName": "WIND",
 	  		"parameterLimit": 20,
-	  		"comparisonType": 1
+	  		"comparisonType": 2
 		  }
 	  ] 
   

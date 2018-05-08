@@ -1,6 +1,7 @@
-import {AlertDefinitionParameter} from './aler-definition-params';
+import {AlertDefinitionParameter} from './alert-definition-params';
 import {AlertConfigService} from './alert-config.service';
 import {AlertDefinition} from './alert-definition';
+import {AlertDefinitionParameterView} from './alert-definition-params-view';
 import {Component, OnInit} from '@angular/core';
 import {SelectItem} from 'primeng/api';
 
@@ -17,7 +18,7 @@ export class ConfigComponent implements OnInit {
   newDefinition: boolean;
   definitions: AlertDefinition[];
   cols: any[];
-  parameters: AlertDefinitionParameter[];
+  parameters: AlertDefinitionParameterView[];
   effects: SelectItem[];
   signs: SelectItem[];
 
@@ -34,10 +35,10 @@ export class ConfigComponent implements OnInit {
       {field: 'timestamp', header: 'Timestamp'}
     ];
     this.effects = [
-      {label: 'Rain', value: 'RAIN'},
-      {label: 'Wind', value: 'WIND'},
-      {label: 'Temperature', value: 'TEMP'},
-      {label: 'Humidity', value: 'HUMI'}
+      {label: 'Rain', value: 'Rain'},
+      {label: 'Wind', value: 'Wind'},
+      {label: 'Temperature', value: 'Temperature'},
+      {label: 'Humidity', value: 'Humidity'}
     ];
     this.signs = [
       {label: '>', value: 1},
@@ -58,6 +59,9 @@ export class ConfigComponent implements OnInit {
 
   save() {
     // TODO first update database
+
+    this.definition.parameters = this.parameters.map(p => this.mapViewToParam(p));
+
     const defs = [...this.definitions];
     if (this.newDefinition) {
       defs.push(this.definition);
@@ -67,6 +71,7 @@ export class ConfigComponent implements OnInit {
 
     this.definitions = defs;
     this.definition = null;
+    this.parameters = null;
     this.displayDialog = false;
   }
 
@@ -81,7 +86,76 @@ export class ConfigComponent implements OnInit {
     this.newDefinition = false;
     this.definition = this.cloneDefinition(event.data);
     this.displayDialog = true;
-    this.parameters = this.definition.parameters;
+    this.parameters = this.definition.parameters.map(p => this.mapParamToView(p));
+  }
+
+  mapParamToView(param: AlertDefinitionParameter): AlertDefinitionParameterView {
+    const view = new AlertDefinitionParameterView();
+    view.id = param.id;
+    view.limit = param.parameterLimit;
+    view.unit = param.unit;
+    switch (param.parameterName) {
+      case 'TEMP':
+        view.name = 'Temperature';
+        view.unit = 'C';
+        break;
+      case 'WIND':
+        view.name = 'Wind';
+        view.unit = 'm/s';
+        break;
+      case 'RAIN':
+        view.name = 'Rain';
+        view.unit = 'mm';
+        break;
+      case 'HUMI':
+        view.name = 'Humidity';
+        view.unit = '%';
+        break;
+      default:
+        view.name = '';
+    }
+    switch (param.comparisonType) {
+      case 2:
+        view.type = '>';
+        break;
+      default:
+        view.type = '<';
+    }
+    return view;
+  }
+
+  mapViewToParam(view: AlertDefinitionParameterView): AlertDefinitionParameter {
+    const param = new AlertDefinitionParameter();
+    param.id = view.id;
+    param.parameterLimit = Number(view.limit);
+    param.unit = view.unit;
+
+    switch (view.name) {
+      case 'Temperature':
+        param.parameterName = 'TEMP';
+        break;
+      case 'Wind':
+        param.parameterName = 'WIND';
+        break;
+      case 'Rain':
+        param.parameterName = 'RAIN';
+        break;
+      case 'Humidity':
+        param.parameterName = 'HUMI';
+        break;
+      default:
+        param.parameterName = '';
+    }
+
+    switch (view.type) {
+      case '>':
+        param.comparisonType = 2;
+        break;
+      default:
+        param.comparisonType = 1;
+    }
+
+    return param;
   }
 
   cloneDefinition(d: AlertDefinition): AlertDefinition {
@@ -93,10 +167,10 @@ export class ConfigComponent implements OnInit {
   }
 
   public addParamRow() {
-    const param = new AlertDefinitionParameter();
-    param.parameterName = '';
-    param.comparisonType = 1;
-    param.parameterLimit = 0;
+    const param = new AlertDefinitionParameterView();
+    param.name = '';
+    param.type = '>';
+    param.limit = 0;
 
     this.parameters.push(param);
   }
