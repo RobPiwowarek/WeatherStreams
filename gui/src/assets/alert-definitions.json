@@ -1,0 +1,117 @@
+[
+  {
+	  "id":1,
+	  "userId": 1,
+	  "alertName": "Deszcz w Warszawie",
+	  "duration": 10,
+	  "location": "Warsaw",
+	  "active": true,
+	  "emailNotif": true,
+	  "slackNotif": true,
+	  "timestamp": 1234567890,
+	  "parameters":[
+		  {
+		  	"id":1, 
+	  		"parameterName": "RAIN",
+	  		"parameterLimit": 10,
+	  		"comparisonType": 1
+		  }
+	  ] 
+  },
+  {
+  	  "id":2,
+	  "userId": 1,
+	  "alertName": "Umiarkowanie w Warszawie",
+	  "duration": 50,
+	  "location": "Warsaw",
+	  "active": true,
+	  "emailNotif": false,
+	  "slackNotif": false,
+	  "timestamp": 1234567890,
+	  "parameters":[
+		  {
+		  	"id":2, 
+	  		"parameterName": "TEMP",
+	  		"parameterLimit": 15,
+	  		"comparisonType": 1
+		  },
+		  {
+		  	"id":3, 
+	  		"parameterName": "TEMP",
+	  		"parameterLimit": 25,
+	  		"comparisonType": 2
+		  },
+		  {
+		  	"id":4, 
+	  		"parameterName": "WIND",
+	  		"parameterLimit": 10,
+	  		"comparisonType": 2
+		  }
+	  ]  
+  },
+  {
+  	  "id":3,
+	  "userId": 1,
+	  "alertName": "Wiatr w Warszawie",
+	  "duration": 50,
+	  "location": "Warsaw",
+	  "active": false,
+	  "emailNotif": false,
+	  "slackNotif": false,
+	  "timestamp": 1234567890,
+	  "parameters":[
+	  	  {
+		  	"id":5, 
+	  		"parameterName": "WIND",
+	  		"parameterLimit": 20,
+	  		"comparisonType": 1
+		  }	
+	  ] 
+  },
+  {
+  	  "id":4,
+	  "userId": 1,
+	  "alertName": "Gorąco w Warszawie",
+	  "duration": 2,
+	  "location": "Warsaw",
+	  "active": true,
+	  "emailNotif": false,
+	  "slackNotif": true,
+	  "timestamp": 1234567890,
+	  "parameters":[
+	  	  {
+			"id":6, 
+	  		"parameterName": "TEMP",
+	  		"parameterLimit": 35,
+	  		"comparisonType": 1
+		  }
+	  ] 
+  },
+  {
+  	  "id":5,
+	  "userId": 1,
+	  "alertName": "Zimno i wietrznie w Warszawie",
+	  "duration": 5,
+	  "location": "Warsaw",
+	  "active": true,
+	  "emailNotif": true,
+	  "slackNotif": false,
+	  "timestamp": 1234567890,
+	  "parameters":[
+	  	  {
+		  	"id":7, 
+	  		"parameterName": "TEMP",
+	  		"parameterLimit": 10,
+	  		"comparisonType": 2
+		  },
+		  {
+		  	"id":8, 
+	  		"parameterName": "WIND",
+	  		"parameterLimit": 20,
+	  		"comparisonType": 1
+		  }
+	  ] 
+  
+  }
+]
+
