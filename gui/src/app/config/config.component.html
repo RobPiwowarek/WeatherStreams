@@ -84,10 +84,11 @@
              	<p-table [value]="parameters">
 				    <ng-template pTemplate="header">
 				        <tr>
-				            <th style="width: 35%" >Effect</th>
-				            <th style="width: 20%" >Sign</th>
-				            <th style="width: 30%" >Limit</th>
+				            <th style="width: 40%" >Effect</th>
+				            <th style="width: 15%" >Sign</th>
+				            <th style="width: 20%" >Limit</th>
 				            <th style="width: 15%" >Unit</th>
+				            <th style="width: 10%" > </th>
 				        </tr>
 				    </ng-template>
 				    <ng-template pTemplate="body" let-rowData>
@@ -124,6 +125,9 @@
 				            </td>
 				            <td>
 								{{rowData.unit}}
+				            </td>
+				            <td>
+								 <button type="button" pButton icon="fa-close" (click)="deleteParam(rowData)"></button>
 				            </td>
 				        </tr>
 				    </ng-template>

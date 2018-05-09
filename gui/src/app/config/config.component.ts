@@ -59,7 +59,7 @@ export class ConfigComponent implements OnInit {
 
   save() {
     // TODO first update database
-
+ 
     this.definition.parameters = this.parameters.map(p => this.mapViewToParam(p));
 
     const defs = [...this.definitions];
@@ -173,6 +173,11 @@ export class ConfigComponent implements OnInit {
     param.limit = 0;
 
     this.parameters.push(param);
+  }
+
+  public deleteParam(selectedParam: AlertDefinitionParameterView) {
+    const index = this.parameters.indexOf(selectedParam);
+    this.parameters = this.parameters.filter((val, i) => i !== index);
   }
 
 }
