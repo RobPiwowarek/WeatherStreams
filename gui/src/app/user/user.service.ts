@@ -9,7 +9,7 @@ import {Observable} from 'rxjs/Observable';
 export class UserService {
 
   public errorMessage = '';
-  private username = '';
+  public currentUser: User;
   private loggedIn = false;
   private baseUrl = 'http://localhost:8090/api/user/';
   httpOptions = {
@@ -26,18 +26,18 @@ export class UserService {
     this.errorMessage = '';
     if (user) {
       this.sendLogin(user, password).subscribe(
-        u => this.processLogin(new User()),
+        u => this.processLogin({id: 1, name: 'Anonymous', surname: 'P', username: 'anonim'}),
         error => this.processLoginError(error)
       );
     } else {
-      this.username = 'anonim'; // mock for test
+      this.currentUser = {id: 1, name: 'Anonymous', surname: 'P', username: 'anonim'};
       this.loggedIn = true;
       this.logginSucceed.emit(true);
     }
   }
 
   processLogin(user: User) {
-    this.username = user.username;
+    this.currentUser = user;
     this.loggedIn = true;
     this.logginSucceed.emit(true);
   }
@@ -49,16 +49,16 @@ export class UserService {
   }
 
   logout(): void {
-    this.username = '';
+    this.currentUser = null;
     this.loggedIn = false;
   }
 
   isLogged(): boolean {
     return this.loggedIn;
   }
-
+  
   getUsername(): string {
-    return this.username;
+    return this.currentUser.username;
   }
 
   public sendLogin(user, password): Observable<void> {
