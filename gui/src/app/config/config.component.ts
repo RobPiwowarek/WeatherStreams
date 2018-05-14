@@ -1,3 +1,4 @@
+import { UserService } from '../user/user.service';
 import {AlertDefinitionParameter} from './alert-definition-params';
 import {AlertConfigService} from './alert-config.service';
 import {AlertDefinition} from './alert-definition';
@@ -12,6 +13,7 @@ import {SelectItem} from 'primeng/api';
 })
 export class ConfigComponent implements OnInit {
 
+  username = 'Anonymous';
   displayDialog: boolean;
   definition: AlertDefinition = new AlertDefinition();
   selectedDefinition: AlertDefinition;
@@ -22,7 +24,7 @@ export class ConfigComponent implements OnInit {
   effects: SelectItem[];
   signs: SelectItem[];
 
-  constructor(private alertConfigService: AlertConfigService) {}
+  constructor(private alertConfigService: AlertConfigService, private userService: UserService) {}
 
   ngOnInit() {
     this.cols = [
@@ -45,6 +47,7 @@ export class ConfigComponent implements OnInit {
       {label: '<', value: 2}
     ];
 
+    this.username = this.userService.currentUser.name;
     this.alertConfigService.getAlertDefinitions().subscribe(
       d => this.definitions = d,
       e => console.log(e));
@@ -58,17 +61,33 @@ export class ConfigComponent implements OnInit {
   }
 
   save() {
-    // TODO first update database
- 
     this.definition.parameters = this.parameters.map(p => this.mapViewToParam(p));
 
-    const defs = [...this.definitions];
     if (this.newDefinition) {
-      defs.push(this.definition);
+      this.alertConfigService.createAlertDefinition(this.definition).subscribe(
+        d => this.processAlertCreated(d),
+        e => console.log(e));
     } else {
-      defs[this.definitions.indexOf(this.selectedDefinition)] = this.definition;
+      this.alertConfigService.saveAlertDefinition(this.definition).subscribe(
+        d => this.processAlertUpdated(),
+        e => console.log(e));
     }
+  }
 
+  private processAlertCreated(newDef: AlertDefinition) {
+    console.log('definition creation success');
+    const defs = [...this.definitions];
+    defs.push(newDef);
+    this.definitions = defs;
+    this.definition = null;
+    this.parameters = null;
+    this.displayDialog = false;
+  }
+
+  private processAlertUpdated() {
+    console.log('definition save success');
+    const defs = [...this.definitions];
+    defs[this.definitions.indexOf(this.selectedDefinition)] = this.definition;
     this.definitions = defs;
     this.definition = null;
     this.parameters = null;
@@ -78,6 +97,12 @@ export class ConfigComponent implements OnInit {
   delete() {
     const index = this.definitions.indexOf(this.selectedDefinition);
     this.definitions = this.definitions.filter((val, i) => i !== index);
+
+    if (this.selectedDefinition.id) {
+      this.alertConfigService.deleteAlertDefinition(this.selectedDefinition.id).subscribe(
+        d => console.log('definition delete success'),
+        e => console.log(e));
+    }
     this.definition = null;
     this.displayDialog = false;
   }
