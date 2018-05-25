@@ -86,8 +86,7 @@ object WebServer extends JsonSupport with CorsSupport {
   }
 
   private def sendMail(request: UserLoginRequest) = {
-   val body = weatherClient.getWeatherData(Seq(("q", "Warsaw")))
-      .getResponseBody
+   val body = weatherClient.getWeatherData(Seq(("q", "Warsaw"))).toString
 
     notificationSender ! EmailNotification("user", request.username.value, body)
   }
