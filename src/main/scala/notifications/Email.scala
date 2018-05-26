@@ -18,7 +18,7 @@ sealed trait EmailConfig {
   val timeout: String
 }
 
-object AutoFileConfig extends EmailConfig {
+object EmailFileConfig extends EmailConfig {
   // copy src/main/resources/reference.conf to src/main/resources/application.conf
   // and set values manually (it will override reference.conf)
   val conf = ConfigFactory.load()
