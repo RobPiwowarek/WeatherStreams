@@ -137,7 +137,7 @@ export class ConfigComponent implements OnInit {
         view.unit = '%';
         break;
       default:
-        view.name = '';
+        view.name = param.parameterName;
     }
     switch (param.comparisonType) {
       case 2:
