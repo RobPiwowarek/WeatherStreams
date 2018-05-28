@@ -1,3 +1,4 @@
+import { AlertService } from './alert/alert-service';
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -62,7 +63,8 @@ import {ConfigComponent} from './config/config.component';
   ],
   providers: [
     UserService,
-    AlertConfigService
+    AlertConfigService,
+    AlertService
   ],
   bootstrap: [AppComponent]
 })
