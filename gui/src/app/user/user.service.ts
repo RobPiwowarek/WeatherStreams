@@ -11,7 +11,7 @@ export class UserService {
   public errorMessage = '';
   public currentUser: User;
   private loggedIn = false;
-  private baseUrl = 'http://localhost:8090/api/user/';
+  private baseUrl = 'http://localhost:8090/api/user';
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -26,11 +26,11 @@ export class UserService {
     this.errorMessage = '';
     if (user) {
       this.sendLogin(user, password).subscribe(
-        u => this.processLogin({id: 1, name: 'Anonymous', surname: 'P', username: 'anonim'}),
+        u => this.processLogin({id: 1, name: 'Anonymous', surname: 'P', username: 'anonim', slack: 'zzz'}),
         error => this.processLoginError(error)
       );
     } else {
-      this.currentUser = {id: 1, name: 'Anonymous', surname: 'P', username: 'anonim'};
+      this.currentUser = {id: 1, name: 'Anonymous', surname: 'P', username: 'anonim', slack: 'zzz'};
       this.loggedIn = true;
       this.logginSucceed.emit(true);
     }
@@ -56,7 +56,7 @@ export class UserService {
   isLogged(): boolean {
     return this.loggedIn;
   }
-  
+
   getUsername(): string {
     return this.currentUser.username;
   }
@@ -65,6 +65,12 @@ export class UserService {
     const userLogin = new UserLogin();
     userLogin.username.value = user;
     userLogin.password.value = password;
-    return this.httpClient.post<void>(this.baseUrl + 'login', userLogin, this.httpOptions);
+    return this.httpClient.post<void>(this.baseUrl + '/login', userLogin, this.httpOptions);
+  }
+
+  public saveUser(user: User): Observable<void> {
+    this.currentUser = user;
+    return new Observable<void>();
+//    return this.httpClient.post<void>(this.baseUrl, user, this.httpOptions);
   }
 }

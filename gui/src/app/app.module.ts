@@ -27,13 +27,15 @@ import {UserService} from './user/user.service';
 import {AlertComponent} from './alert/alert.component';
 import { AlertConfigService } from './config/alert-config.service';
 import {ConfigComponent} from './config/config.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     WelcomeComponent,
     AlertComponent,
-    ConfigComponent
+    ConfigComponent,
+    ProfileComponent
   ],
   imports: [
     TableModule,
@@ -57,6 +59,7 @@ import {ConfigComponent} from './config/config.component';
     RouterModule.forRoot([
       {path: 'alert', component: AlertComponent},
       {path: 'config', component: ConfigComponent},
+      {path: 'profile', component: ProfileComponent},
       {path: '', redirectTo: '/', pathMatch: 'full'},
       {path: '**', redirectTo: '/', pathMatch: 'full'}
     ])

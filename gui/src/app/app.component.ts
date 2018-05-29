@@ -21,6 +21,10 @@ export class AppComponent implements OnInit {
     {
       label: 'Configuration',
       routerLink: ['/config']
+    },
+    {
+      label: 'Profile',
+      routerLink: ['/profile']
     }
   ];
 
@@ -41,6 +45,7 @@ export class AppComponent implements OnInit {
   logout() {
     this.needLogin = true;
     this.userService.logout();
+    this.router.navigate(['/']);
   }
 
 }
