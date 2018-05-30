@@ -1,7 +1,7 @@
 <div class="ui-g-12">
 <div class="ui-g-1"></div>
 <div class="ui-g-10">
-	<h3 style="text-align:center">{{username}} alert definitions</h3>
+	<h3 style="text-align:center">{{username}} alerts</h3>
 	<p-table [columns]="cols" [value]="alerts" selectionMode="single" [(selection)]="selectedAlert" (onRowSelect)="onRowSelect($event)" [paginator]="true" [rows]="15">
 	    <ng-template pTemplate="header" let-columns>
 	        <tr>

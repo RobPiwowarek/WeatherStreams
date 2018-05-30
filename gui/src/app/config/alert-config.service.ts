@@ -22,7 +22,7 @@ export class AlertConfigService {
   public getAlertDefinitions(): Observable<AlertDefinition[]> {
     const userId = this.userService.currentUser.id;
     return this.http.get<AlertDefinition[]>('assets/alert-definitions.json');
-    //  http://localhost:8090/api/config/definitions/user/{user_id}
+    //  http://localhost:8090/api/config/definition/user/{user_id}
   }
 
   public createAlertDefinition(definition): Observable<AlertDefinition> {

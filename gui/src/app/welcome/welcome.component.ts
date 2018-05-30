@@ -1,6 +1,6 @@
 import {UserService} from '../user/user.service';
 import {Component, OnInit, Output, EventEmitter} from '@angular/core';
-import { Router } from '@angular/router';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-welcome',
@@ -15,10 +15,10 @@ export class WelcomeComponent implements OnInit {
   constructor(private userService: UserService, public router: Router) {}
 
   ngOnInit() {
-    if(this.needLogin){
-      this.router.navigate(['/']);  
+    if (this.needLogin) {
+      this.router.navigate(['/']);
     }
-    
+
     this.userService.logginSucceed.subscribe(
       result => this.processResult(result)
     );
