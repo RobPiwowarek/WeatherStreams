@@ -18,3 +18,7 @@ sealed trait Notification {
 case class EmailNotification(override val user: String,
                              email: String,
                              override val alert: String) extends Notification {}
+
+case class SlackNotification(override val user: String,
+                             slackUsername: String,
+                             override val alert: String) extends Notification {}
