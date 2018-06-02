@@ -1,0 +1,27 @@
+[
+	{
+		"name": "TEMP",
+		"value": "-10",
+		"limit": "-1",
+		"outOfLimit": true
+	},
+	{
+		"name": "WIND",
+		"value": "23",
+		"limit": "",
+		"outOfLimit": false
+	},
+	{
+		"name": "RAIN",
+		"value": "0",
+		"limit": "",
+		"outOfLimit": false
+	},
+	{
+		"name": "HUMI",
+		"value": "40",
+		"limit": "",
+		"outOfLimit": false
+	}
+]
+

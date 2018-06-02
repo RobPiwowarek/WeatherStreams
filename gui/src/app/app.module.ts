@@ -1,10 +1,10 @@
+import { AlertService } from './alert/alert-service';
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ButtonModule} from 'primeng/button';
 import {TableModule} from 'primeng/table';
 import {InputTextModule} from 'primeng/inputtext';
-import {TreeModule} from 'primeng/tree';
 import {HttpClientModule} from '@angular/common/http';
 import {RouterModule} from '@angular/router';
 import {MenuModule} from 'primeng/menu';
@@ -17,21 +17,25 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
 import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
 import {ToolbarModule} from 'primeng/toolbar';
-import {TreeTableModule} from 'primeng/treetable';
 import {CheckboxModule} from 'primeng/checkbox';
+import {DialogModule} from 'primeng/dialog';
+import {InputSwitchModule} from 'primeng/inputswitch';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {AppComponent} from './app.component';
 import {WelcomeComponent} from './welcome/welcome.component';
 import {UserService} from './user/user.service';
 import {AlertComponent} from './alert/alert.component';
+import { AlertConfigService } from './config/alert-config.service';
 import {ConfigComponent} from './config/config.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     WelcomeComponent,
     AlertComponent,
-    ConfigComponent
+    ConfigComponent,
+    ProfileComponent
   ],
   imports: [
     TableModule,
@@ -43,26 +47,27 @@ import {ConfigComponent} from './config/config.component';
     DropdownModule,
     MessagesModule,
     MessageModule,
-    InputTextareaModule,
+    InputSwitchModule,
     FormsModule,
     ToolbarModule,
-    TreeModule,
-    TreeTableModule,
     CheckboxModule,
+    DialogModule,
     AutoCompleteModule,
     HttpClientModule,
-    MultiSelectModule,
     MenuModule,
     MenubarModule,
     RouterModule.forRoot([
       {path: 'alert', component: AlertComponent},
       {path: 'config', component: ConfigComponent},
+      {path: 'profile', component: ProfileComponent},
       {path: '', redirectTo: '/', pathMatch: 'full'},
       {path: '**', redirectTo: '/', pathMatch: 'full'}
     ])
   ],
   providers: [
-    UserService
+    UserService,
+    AlertConfigService,
+    AlertService
   ],
   bootstrap: [AppComponent]
 })

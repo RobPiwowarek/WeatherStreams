@@ -1,0 +1,49 @@
+<div class="ui-g-12">
+	<div class="ui-g-4"></div>
+	<div class="ui-g-4">
+		<div class="ui-g-12">
+			<div class="ui-g-4">
+				<label for="username">username</label>
+			</div>
+			<div class="ui-g-8">
+				{{user.username}}
+			</div>
+		</div>
+		<div class="ui-g-12">
+			<div class="ui-g-4">
+				<label for="name">name</label>
+			</div>
+			<div class="ui-g-8">
+				<input pInputText id="name" [(ngModel)]="user.name" />
+			</div>
+		</div>
+		<div class="ui-g-12">
+			<div class="ui-g-4">
+				<label for="surname">surname</label>
+			</div>
+			<div class="ui-g-8">
+				<input pInputText id="surname" [(ngModel)]="user.surname" />
+			</div>
+		</div>
+		<div class="ui-g-12">
+			<div class="ui-g-4">
+				<label for="slack">slack</label>
+			</div>
+			<div class="ui-g-8">
+				<input pInputText id="slack" [(ngModel)]="user.slack" />
+			</div>
+		</div>
+		<br/>
+		<div class="ui-g-12">
+			<div class="ui-g-4">
+				<button type="button" pButton icon="fa-save" (click)="save()" label="Save"></button>
+			</div>
+			<div class="ui-g-8">
+				{{message}}
+			</div>
+		</div>
+		
+		
+		
+	</div>
+</div>

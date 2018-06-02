@@ -9,9 +9,9 @@ import {Observable} from 'rxjs/Observable';
 export class UserService {
 
   public errorMessage = '';
-  private username = '';
+  public currentUser: User;
   private loggedIn = false;
-  private baseUrl = 'http://localhost:8090/api/user/';
+  private baseUrl = 'http://localhost:8090/api/user';
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -26,18 +26,23 @@ export class UserService {
     this.errorMessage = '';
     if (user) {
       this.sendLogin(user, password).subscribe(
-        u => this.processLogin(new User()),
+        u => this.processLogin(u),
         error => this.processLoginError(error)
       );
     } else {
-      this.username = 'anonim'; // mock for test
+      this.currentUser = {id: 1, username: 'anonim', name: 'ABC', surname: 'abc', slack: 'fake'};
       this.loggedIn = true;
       this.logginSucceed.emit(true);
     }
   }
 
   processLogin(user: User) {
-    this.username = user.username;
+    if (user) {
+      this.currentUser = user;
+    }
+    else {
+      this.currentUser = {id: 1, username: 'anonim', name: 'ABC', surname: 'abc', slack: 'fake'};
+    }
     this.loggedIn = true;
     this.logginSucceed.emit(true);
   }
@@ -49,7 +54,7 @@ export class UserService {
   }
 
   logout(): void {
-    this.username = '';
+    this.currentUser = null;
     this.loggedIn = false;
   }
 
@@ -58,13 +63,19 @@ export class UserService {
   }
 
   getUsername(): string {
-    return this.username;
+    return this.currentUser.username;
   }
 
-  public sendLogin(user, password): Observable<void> {
+  public sendLogin(user, password): Observable<User> {
     const userLogin = new UserLogin();
     userLogin.username.value = user;
     userLogin.password.value = password;
-    return this.httpClient.post<void>(this.baseUrl + 'login', userLogin, this.httpOptions);
+    return this.httpClient.post<User>(this.baseUrl + '/login', userLogin, this.httpOptions);
+  }
+
+  public saveUser(user: User): Observable<void> {
+    this.currentUser = user;
+    //    return new Observable<void>();
+    return this.httpClient.post<void>(this.baseUrl, user, this.httpOptions);
   }
 }

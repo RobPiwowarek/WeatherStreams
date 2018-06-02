@@ -8,7 +8,7 @@ import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import domain.requests.{AlertRequest, UserLoginRequest, UserRegisterRequest}
-import notifications.{AutoFileConfig, EmailNotification, Sender}
+import notifications.{EmailFileConfig, EmailNotification, Sender, SlackFileConfig}
 import providers.WeatherClient
 import providers.openweathermap._
 import server.database.MariaDb
@@ -20,7 +20,7 @@ object WebServer extends JsonSupport with CorsSupport {
 
   val weatherClient: WeatherClient = OpenWeatherMapClient
 
-  val notificationSender: ActorRef = system.actorOf(Props(classOf[Sender], AutoFileConfig), name = "NotificationSender")
+  val notificationSender: ActorRef = system.actorOf(Props(classOf[Sender], EmailFileConfig, SlackFileConfig), name = "NotificationSender")
 
   def main(args: Array[String]): Unit = {
     val route: Route =
