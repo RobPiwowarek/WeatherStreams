@@ -26,18 +26,23 @@ export class UserService {
     this.errorMessage = '';
     if (user) {
       this.sendLogin(user, password).subscribe(
-        u => this.processLogin({id: 1, name: 'Anonymous', surname: 'P', username: 'anonim', slack: 'zzz'}),
+        u => this.processLogin(u),
         error => this.processLoginError(error)
       );
     } else {
-      this.currentUser = {id: 1, name: 'Anonymous', surname: 'P', username: 'anonim', slack: 'zzz'};
+      this.currentUser = {id: 1, username: 'anonim', name: 'ABC', surname: 'abc', slack: 'fake'};
       this.loggedIn = true;
       this.logginSucceed.emit(true);
     }
   }
 
   processLogin(user: User) {
-    this.currentUser = user;
+    if (user) {
+      this.currentUser = user;
+    }
+    else {
+      this.currentUser = {id: 1, username: 'anonim', name: 'ABC', surname: 'abc', slack: 'fake'};
+    }
     this.loggedIn = true;
     this.logginSucceed.emit(true);
   }
@@ -61,16 +66,16 @@ export class UserService {
     return this.currentUser.username;
   }
 
-  public sendLogin(user, password): Observable<void> {
+  public sendLogin(user, password): Observable<User> {
     const userLogin = new UserLogin();
     userLogin.username.value = user;
     userLogin.password.value = password;
-    return this.httpClient.post<void>(this.baseUrl + '/login', userLogin, this.httpOptions);
+    return this.httpClient.post<User>(this.baseUrl + '/login', userLogin, this.httpOptions);
   }
 
   public saveUser(user: User): Observable<void> {
     this.currentUser = user;
-    return new Observable<void>();
-//    return this.httpClient.post<void>(this.baseUrl, user, this.httpOptions);
+    //    return new Observable<void>();
+    return this.httpClient.post<void>(this.baseUrl, user, this.httpOptions);
   }
 }

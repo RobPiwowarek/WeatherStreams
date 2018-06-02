@@ -1,5 +1,5 @@
 import {UserService} from '../user/user.service';
-import {Alert} from './Alert';
+import {Alert} from './alert';
 import {AlertHistoryParam} from './alert-history-param';
 import {AlertService} from './alert-service';
 import {Component, OnInit} from '@angular/core';
