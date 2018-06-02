@@ -1,11 +1,8 @@
 package notifications
 
-sealed trait Notification {
-  val alert: String // todo - different parameters for different alert conditions
-  val user: String
-
-  val title = "Weather Streams Alert"
-
+case class EmailNotification(user: String,
+                             email: String,
+                             alert: String) {
   override def toString =
     s"""
        | Hi $user!\n\n
@@ -15,10 +12,12 @@ sealed trait Notification {
     """.stripMargin
 }
 
-case class EmailNotification(override val user: String,
-                             email: String,
-                             override val alert: String) extends Notification {}
-
-case class SlackNotification(override val user: String,
-                             slackUsername: String,
-                             override val alert: String) extends Notification {}
+case class SlackNotification(slackUsername: String,
+                             alert: String) {
+  override def toString =
+    s"""
+       | Hi $slackUsername!\n\n
+       | Conditions for one of your alerts were met:\n
+       | $alert
+    """.stripMargin
+}
