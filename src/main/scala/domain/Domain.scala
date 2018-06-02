@@ -2,7 +2,7 @@ package domain
 
 object Domain {
 
-  final case class ID(value: String)
+  final case class ID(value: Int)
 
   final case class Password(value: String)
 

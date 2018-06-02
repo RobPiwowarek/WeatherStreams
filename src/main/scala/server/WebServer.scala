@@ -7,7 +7,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
-import domain.requests.{AlertRequest, UserLoginRequest, UserRegisterRequest}
+import domain.requests.{AlertHistoryRequest, UserLoginRequest, UserRegisterRequest}
 import notifications.{EmailFileConfig, EmailNotification, Sender, SlackFileConfig}
 import providers.WeatherClient
 import providers.openweathermap._
@@ -39,7 +39,7 @@ object WebServer extends JsonSupport with CorsSupport {
         } ~
           put {
             pathPrefix("alert") {
-              entity(as[AlertRequest]) {
+              entity(as[AlertHistoryRequest]) {
                 request =>
                   handleAlertRequest(request)
               }
@@ -61,7 +61,7 @@ object WebServer extends JsonSupport with CorsSupport {
   }
 
   // todo:
-  private def handleAlertRequest(request: AlertRequest) = {
+  private def handleAlertRequest(request: AlertHistoryRequest) = {
     complete(HttpResponse(StatusCodes.OK, entity = ""))
   }
 

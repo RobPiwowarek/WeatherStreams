@@ -1,7 +1,7 @@
 package server.database
 
 import domain.Domain.Email
-import domain.requests.{AlertRequest, UserRegisterRequest}
+import domain.requests.{AlertHistoryRequest, UserRegisterRequest}
 import server.database.model.TableQueries._
 import server.database.model.{Alert, User}
 import slick.basic.DatabaseConfig
@@ -22,7 +22,7 @@ object MariaDb {
       users += user)), 10 seconds)
   }
 
-  def insertNewAlert(alertRequest: AlertRequest) = {
+  def insertNewAlert(alertRequest: AlertHistoryRequest) = {
     val user = selectUser(alertRequest.username).get // todo: some kind of throw
 
     val action = alerts += Alert(
