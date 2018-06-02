@@ -15,7 +15,5 @@ class Sender(emailConfig: EmailConfig, slackConfig: SlackConfig) extends Actor {
       emailSender ! email
     case slackMsg: SlackNotification =>
       slackSender ! slackMsg
-    case generic: Notification =>
-      print(generic.toString()) // debug
   }
 }

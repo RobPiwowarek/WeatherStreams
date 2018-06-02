@@ -78,6 +78,6 @@ class Email(conf: EmailConfig) extends Actor {
 
   def receive = {
     case e: EmailNotification =>
-      sendMessage(e.email, e.title, e.toString())
+      sendMessage(e.email, "Weather Streams Alert", e.toString())
   }
 }
