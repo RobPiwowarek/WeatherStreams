@@ -4,43 +4,40 @@ import spray.json.DefaultJsonProtocol
 
 object Responses extends DefaultJsonProtocol {
 
-  sealed trait OpenWeatherMapResponse
-
   final case class Weather(main: General,
                            wind: Wind,
                            clouds: Clouds,
                            rain: Option[Rain],
                            snow: Option[Snow],
                            weather: List[WeatherCondition],
-                           dt: BigInt) extends OpenWeatherMapResponse //dt == timestamp
+                           dt: BigInt) //dt == timestamp
 
+  final case class General(grnd_level: Option[BigDecimal],
+                           humidity: BigDecimal,
+                           pressure: BigDecimal,
+                           sea_level: Option[BigDecimal],
+                           temp: BigDecimal,
+                           temp_min: BigDecimal,
+                           temp_max: BigDecimal)
 
-  case class General(grnd_level: Option[BigDecimal],
-                     humidity: BigDecimal,
-                     pressure: BigDecimal,
-                     sea_level: Option[BigDecimal],
-                     temp: BigDecimal,
-                     temp_min: BigDecimal,
-                     temp_max: BigDecimal)
+  final case class WeatherCondition(main: String,
+                                    description: String,
+                                    id: Int,
+                                    icon: String)
 
-  case class WeatherCondition(main: String,
-                              description: String,
-                              id: Int,
-                              icon: String)
-
-  case class Wind(speed: BigDecimal,
-                  deg: BigDecimal)
+  final case class Wind(speed: BigDecimal,
+                        deg: BigDecimal)
 
   // longitutde, latitude
-  case class Coordinates(lon: BigDecimal,
-                         lat: BigDecimal)
+  final case class Coordinates(lon: BigDecimal,
+                               lat: BigDecimal)
 
   // cloudines == all
-  case class Clouds(all: BigInt)
+  final case class Clouds(all: BigInt)
 
-  case class Snow(`3h`: Option[BigDecimal])
+  final case class Snow(`3h`: Option[BigDecimal])
 
-  case class Rain(`3h`: Option[BigDecimal])
+  final case class Rain(`3h`: Option[BigDecimal])
 
   implicit val rainFormat = jsonFormat1(Rain)
   implicit val snowFormat = jsonFormat1(Snow)

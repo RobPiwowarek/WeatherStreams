@@ -1,9 +1,7 @@
 package providers
 
-import org.asynchttpclient.Response
+import providers.openweathermap.Responses.Weather
 
 trait WeatherClient {
-  def getWeatherData(params: Seq[(String, String)]): Response
-
-  def getForecastData(params: Seq[(String, String)]): Response
+  def getWeatherData(params: Seq[(String, String)]): Weather
 }

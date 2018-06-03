@@ -5,8 +5,10 @@ import com.netaporter.uri.dsl._
 import com.typesafe.config.ConfigFactory
 import org.asynchttpclient.Dsl._
 import providers.WeatherClient
+import providers.openweathermap.Responses.Weather
+import spray.json._
 
-object OpenWeatherMapClient extends WeatherClient{
+object OpenWeatherMapClient extends WeatherClient {
   val config = ConfigFactory.load()
 
   val endpointBase = Uri.parse(config.getString("open-weather-map.endpoint"))
@@ -16,15 +18,9 @@ object OpenWeatherMapClient extends WeatherClient{
 
   val httpClient = asyncHttpClient()
 
-    def getWeatherData(params: Seq[(String, String)]) = {
-      val url = weatherEndpoint.addParams(params) & ("appid", apiKey.value)
-      val whenResponse = httpClient.prepareGet(weatherEndpoint.addParams(params) & ("appid", apiKey.value)).execute()
-      println(url.toString)
-      whenResponse.get
-    }
-
-  def getForecastData(params: Seq[(String, String)]) = {
-    val whenResponse = httpClient.prepareGet(forecastEndpoint.addParams(params) & ("appid", apiKey)).execute()
-    whenResponse.get
+  def getWeatherData(params: Seq[(String, String)]): Weather = {
+    val url = weatherEndpoint.addParams(params) & ("appid", apiKey.value)
+    val response = httpClient.prepareGet(weatherEndpoint.addParams(params) & ("appid", apiKey.value)).execute().get()
+    response.getResponseBody().parseJson.convertTo[Weather]
   }
 }

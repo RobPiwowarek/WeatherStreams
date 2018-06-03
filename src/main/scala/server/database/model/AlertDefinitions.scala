@@ -12,8 +12,6 @@ class AlertDefinitions(tag: Tag) extends Table[AlertDefinition](tag, Some("weath
 
   def alertName = column[String]("alert_name")
 
-  def alertFk = foreignKey("alert", alertName, alerts)(_.name)
-
   def duration = column[Int]("duration")
 
   def location = column[String]("location")
