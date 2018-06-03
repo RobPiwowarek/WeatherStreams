@@ -7,7 +7,7 @@ object Helpers {
     val paramStrings = parameters
       .map {
         parameter => {
-          val comparison = parameter.comparisonType.match {
+          val comparison = parameter.comparisonType match {
             case 1 => "<"
             case 2 => ">"
           }

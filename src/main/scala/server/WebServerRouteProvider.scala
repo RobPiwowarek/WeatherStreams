@@ -167,12 +167,6 @@ class WebServerRouteProvider(databaseProvider: DatabaseProvider) extends JsonSup
     complete(HttpResponse(StatusCodes.OK))
   }
 
-  private def sendMail(request: UserLoginRequest) = {
-    val body = weatherClient.getWeatherData(Seq(("q", "Warsaw"))).toString
-
-    notificationSender ! EmailNotification("user", request.username.value, body)
-  }
-
   private def userToUserLoginResponse(user: User) = UserLoginResponse(ID(user.id.toInt), Email(user.email), Name(user.name), Surname(user.surname), SlackId(user.slackId))
 
 }
