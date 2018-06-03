@@ -1,10 +1,14 @@
 package server.database
 
-import domain.Domain.{Email, ID}
+import domain.Domain.{Email, ID, Location}
 import domain.api.{AlertDefinitionParameter, AlertDefinitionRequest, UserUpdateRequest}
 import server.database.model._
 
 trait DatabaseInterface {
+
+  def getAlertsFromLocation(location: Location) : Seq[AlertDefinition]
+
+  def getLocationsWithActiveAlerts() : Seq[Location]
 
   def getAlertHistoryList(alertId: Int): Seq[AlertHistory]
 

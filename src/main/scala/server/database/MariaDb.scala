@@ -1,6 +1,6 @@
 package server.database
 
-import domain.Domain.{Email, ID}
+import domain.Domain.{Email, ID, Location}
 import domain.api.{AlertDefinitionParameter, AlertDefinitionRequest, UserUpdateRequest}
 import server.database.model.TableQueries._
 import server.database.model._
@@ -14,6 +14,20 @@ import scala.concurrent.duration._
 class MariaDb extends DatabaseInterface {
   val databaseConfig = DatabaseConfig.forConfig[MySQLProfile]("maria-db")
   val db = databaseConfig.db
+
+  override def getAlertsFromLocation(location: Location) : Seq[AlertDefinition] = {
+    val query = alertDefinitions.result
+    val defs = Await.result(db.run(query), 10 seconds)
+
+    defs.filter(_.active).filter(_.location == location.value)
+  }
+
+  override def getLocationsWithActiveAlerts() : Seq[Location] = {
+    val query = alertDefinitions.result
+    val defs = Await.result(db.run(query), 10 seconds)
+
+    defs.filter(_.active).map(x => Location(x.location)).distinct
+  }
 
   override def getAlertHistoryList(alertId: Int): Seq[AlertHistory] = {
     val query = alertHistories.filter(_.alertId === alertId.toLong)
