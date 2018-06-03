@@ -14,7 +14,7 @@ import domain.api._
 import notifications.{EmailFileConfig, EmailNotification, Sender, SlackFileConfig}
 import providers.WeatherClient
 import providers.openweathermap._
-import server.database.MariaDb
+import server.database.{DatabaseInterface, MariaDb}
 import server.database.model.User
 import spray.json._
 
@@ -24,84 +24,87 @@ object WebServer extends JsonSupport with CorsSupport {
   implicit val executionContext = system.dispatcher
 
   val weatherClient: WeatherClient = OpenWeatherMapClient
-
+  val database: DatabaseInterface = MariaDb
   val notificationSender: ActorRef = system.actorOf(Props(classOf[Sender], EmailFileConfig, SlackFileConfig), name = "NotificationSender")
 
   def main(args: Array[String]): Unit = {
-    val route: Route =
-      cors() {
-        post {
-          pathPrefix("api") {
-            pathPrefix("user") {
-              pathPrefix("login") {
-                entity(as[UserLoginRequest]) {
-                  request =>
-                    handleLoginRequest(request)
-                }
-              }
-            }
-          }
-        } ~ post {
-          pathPrefix("api") {
-            pathPrefix("user") {
-              entity(as[UserUpdateRequest]) {
-                request =>
-                  handleUpdateUserRequest(request)
-              }
-            }
-          }
-        } ~ get {
-          path("api" / "config" / "definition" / "user" / IntNumber) {
-            int =>
-              handleAlertDefinitionGet(int)
-          }
-        } ~ put {
-          path("api" / "config" / "definition") {
-            entity(as[AlertDefinitionRequest]) {
-              request =>
-                handleAlertDefinitionAdd(request)
-            }
-          }
-        } ~ post {
-          path("api" / "config" / "definition") {
-            entity(as[AlertDefinitionRequest]) {
-              request =>
-                handleAlertDefinitionUpdate(request)
-            }
-          }
-        } ~ post {
-          path("api" / "config" / "definition" / IntNumber) {
-            int =>
-              handleAlertDefinitionDelete(int)
-          }
-        } ~ get {
-          path("api" / "alert" / "user" / IntNumber) {
-            int =>
-              handleAlertListGet(int)
-          }
-        } ~ post {
-          path("api" / "alert" / IntNumber) {
-            int =>
-              handleAlertDelete(int)
-          }
-        } ~ get {
-          path("api" / "alert" / IntNumber / "history") {
-            int =>
-              handleAlertHistoryGet(int)
-          }
-        }
-      }
+    val route: Route = routeSetup()
 
     val corsSupportedRoute = corsSupport(route)
 
     Http().bindAndHandle(corsSupportedRoute, "0.0.0.0", 8090)
   }
 
+  def routeSetup() = {
+    cors() {
+      post {
+        pathPrefix("api") {
+          pathPrefix("user") {
+            pathPrefix("login") {
+              entity(as[UserLoginRequest]) {
+                request =>
+                  handleLoginRequest(request)
+              }
+            }
+          }
+        }
+      } ~ post {
+        pathPrefix("api") {
+          pathPrefix("user") {
+            entity(as[UserUpdateRequest]) {
+              request =>
+                handleUpdateUserRequest(request)
+            }
+          }
+        }
+      } ~ get {
+        path("api" / "config" / "definition" / "user" / IntNumber) {
+          int =>
+            handleAlertDefinitionGet(int)
+        }
+      } ~ put {
+        path("api" / "config" / "definition") {
+          entity(as[AlertDefinitionRequest]) {
+            request =>
+              handleAlertDefinitionAdd(request)
+          }
+        }
+      } ~ post {
+        path("api" / "config" / "definition") {
+          entity(as[AlertDefinitionRequest]) {
+            request =>
+              handleAlertDefinitionUpdate(request)
+          }
+        }
+      } ~ post {
+        path("api" / "config" / "definition" / IntNumber) {
+          int =>
+            handleAlertDefinitionDelete(int)
+        }
+      } ~ get {
+        path("api" / "alert" / "user" / IntNumber) {
+          int =>
+            handleAlertListGet(int)
+        }
+      } ~ post {
+        path("api" / "alert" / IntNumber) {
+          int =>
+            handleAlertDelete(int)
+        }
+      } ~ get {
+        path("api" / "alert" / IntNumber / "history") {
+          int =>
+            handleAlertHistoryGet(int)
+        }
+      }
+    }
+  }
+
   private def handleAlertListGet(id: Int) = {
     complete(
       HttpResponse(
       StatusCodes.OK,
-      entity = MariaDb
+      entity = database
         .getAlertList(id)
         .map(alert => AlertResponse(ID(alert.id.toInt), Name(alert.name), Date(alert.date.toString), Location(alert.location)))
         .map(_.toJson.toString)
@@ -110,7 +113,7 @@ object WebServer extends JsonSupport with CorsSupport {
   }
 
   private def handleAlertDelete(id: Int) = {
-    MariaDb.deleteAlert(id)
+    database.deleteAlert(id)
     complete(HttpResponse(StatusCodes.OK))
   }
 
@@ -118,24 +121,24 @@ object WebServer extends JsonSupport with CorsSupport {
     complete(
       HttpResponse(
         StatusCodes.OK,
-        entity = AlertHistoryResponse(MariaDb
+        entity = AlertHistoryResponse(database
           .getAlertHistoryList(id)
           .map(alert => AlertHistoryEntry(Name(alert.parameterName), alert.parameterValue, alert.parameterLimit, alert.parameterValue > alert.parameterLimit))).toJson.toString
       ))
   }
 
   private def handleAlertDefinitionDelete(id: Int) = {
-    MariaDb.deleteAlertDefinition(id)
+    database.deleteAlertDefinition(id)
     complete(StatusCodes.OK)
   }
 
   private def handleAlertDefinitionUpdate(request: AlertDefinitionRequest) = {
-    MariaDb.updateAlertDefinition(request)
+    database.updateAlertDefinition(request)
     complete(StatusCodes.OK)
   }
 
   private def handleAlertDefinitionAdd(request: AlertDefinitionRequest) = {
-    MariaDb.insertAlertDefinition(request)
+    database.insertAlertDefinition(request)
     complete(StatusCodes.OK)
   }
 
@@ -143,7 +146,7 @@ object WebServer extends JsonSupport with CorsSupport {
     complete(
       HttpResponse(
         StatusCodes.OK,
-        entity = MariaDb
+        entity = database
           .getAlertDefinitions(id)
           .map {
             case (defi, params) =>
@@ -166,7 +169,7 @@ object WebServer extends JsonSupport with CorsSupport {
   }
 
   private def handleLoginRequest(request: UserLoginRequest) = {
-    MariaDb.selectUser(request.username) match {
+    database.selectUser(request.username) match {
       case Some(user) =>
         if (user.password.equals(request.password.value))
           complete(HttpResponse(StatusCodes.OK, entity = userToUserLoginResponse(user).toJson.toString))
@@ -178,7 +181,7 @@ object WebServer extends JsonSupport with CorsSupport {
   }
 
   private def handleUpdateUserRequest(request: UserUpdateRequest) = {
-    MariaDb.updateUser(request)
+    database.updateUser(request)
     complete(HttpResponse(StatusCodes.OK))
   }
 

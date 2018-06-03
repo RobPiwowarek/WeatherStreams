@@ -11,11 +11,11 @@ import slick.jdbc.MySQLProfile.api._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-object MariaDb {
+object MariaDb extends DatabaseInterface{
   val databaseConfig = DatabaseConfig.forConfig[MySQLProfile]("maria-db")
   val db = databaseConfig.db
 
-  def getAlertHistoryList(alertId: Int) = {
+  override def getAlertHistoryList(alertId: Int): Seq[AlertHistory] = {
     val query = alertHistories.filter(_.alertId === alertId.toLong)
 
     Await
@@ -23,7 +23,7 @@ object MariaDb {
       .map(alert => AlertHistory(alert.id, alert.alertId, alert.parameterName, alert.parameterValue, alert.parameterLimit))
   }
 
-  def getAlertList(userId: Int) = {
+  override def getAlertList(userId: Int): Seq[Alert] = {
     val query = alerts.filter(_.weatherUserId === userId.toLong)
 
     Await
@@ -31,17 +31,17 @@ object MariaDb {
       .map(alert => Alert(alert.id, alert.weatherUserId, alert.name, alert.date, alert.location, alert.duration))
   }
 
-  def deleteAlert(id: Int) = {
+  override def deleteAlert(id: Int): Int = {
     Await.result(db.run(alerts.filter(_.id === id.toLong).delete), 10 seconds)
   }
 
-  def deleteAlertDefinition(id: Int) = {
+  override def deleteAlertDefinition(id: Int): Int = {
     val query = alertDefinitions.filter(_.id === id.toLong)
 
     Await.result(db.run(query.delete), 10 seconds)
   }
 
-  def updateAlertDefinition(alertRequest: AlertDefinitionRequest) = {
+  override def updateAlertDefinition(alertRequest: AlertDefinitionRequest) = {
     val query = alertDefinitions
       .filter(_.id === alertRequest.id.value.toLong)
       .map(alert => (alert.weatherUserId, alert.alertName, alert.duration, alert.location, alert.active, alert.emailNotif, alert.slackNotif))
@@ -60,7 +60,7 @@ object MariaDb {
     alertRequest.parameters.foreach(updateAlertDefinitionParameter(alertRequest.id, _))
   }
 
-  def updateAlertDefinitionParameter(id: ID, param: AlertDefinitionParameter) = {
+  override def updateAlertDefinitionParameter(id: ID, param: AlertDefinitionParameter): Int = {
     val query = definitionParameters
       .filter(_.id === param.id.value.toLong)
       .map(param => (param.alertDefinitionId, param.parameterName, param.parameterLimit, param.comparisonType, param.unit))
@@ -70,7 +70,7 @@ object MariaDb {
         .update((id.value.toLong, param.parameterName.value, param.parameterLimit, param.comparisonType, param.unit))), 10 seconds)
   }
 
-  def insertAlertDefinition(alertRequest: AlertDefinitionRequest) = {
+  override def insertAlertDefinition(alertRequest: AlertDefinitionRequest) = {
     val action = alertDefinitions returning alertDefinitions.map(_.id) += AlertDefinition(
       alertRequest.id.value,
       alertRequest.userId.value,
@@ -86,7 +86,7 @@ object MariaDb {
     alertRequest.parameters.foreach(insertAlertDefinitionParameter(id, _))
   }
 
-  def insertAlertDefinitionParameter(id: Long, param: AlertDefinitionParameter) = {
+  override def insertAlertDefinitionParameter(id: Long, param: AlertDefinitionParameter): Int = {
     val action = definitionParameters +=
       DefinitionParameter(
         param.id.value,
@@ -98,7 +98,7 @@ object MariaDb {
     Await.result(db.run(action), 10 seconds)
   }
 
-  def getAlertDefinitions(userId: Int) = {
+  override def getAlertDefinitions(userId: Int): Seq[(AlertDefinition, Seq[DefinitionParameter])] = {
     val query = alertDefinitions
       .filter(_.weatherUserId === userId.toLong)
 
@@ -118,13 +118,13 @@ object MariaDb {
       .map(defi => defi -> getAlertDefinitionParameters(defi.id.toInt))
   }
 
-  def getAlertDefinitionParameters(definitionId: Int) = {
+  override def getAlertDefinitionParameters(definitionId: Int): Seq[DefinitionParameter] = {
     Await
       .result(db.run(definitionParameters.filter(_.id === definitionId.toLong).result), 10 seconds)
       .map(param => DefinitionParameter(param.id, param.alertDefinitionId, param.parameterName, param.parameterLimit, param.comparisonType, param.unit))
   }
 
-  def updateUser(updateUserRequest: UserUpdateRequest) = {
+  override def updateUser(updateUserRequest: UserUpdateRequest): Int = {
     val query = users
       .filter(_.id === updateUserRequest.id.value.toLong)
       .map(user => (user.email, user.slackId, user.name, user.surname))
@@ -134,7 +134,7 @@ object MariaDb {
         .update((updateUserRequest.username.value, updateUserRequest.slack.value, updateUserRequest.name.value, updateUserRequest.surname.value))), 10 seconds)
   }
 
-  def selectUserById(id: ID): Option[User] = {
+  override def selectUserById(id: ID): Option[User] = {
     Await.result(
       db.run(users
         .filter(_.id === id.value.toLong).result), 10 seconds)
@@ -142,7 +142,7 @@ object MariaDb {
       .map(x => User(x.id, x.email, x.password, x.slackId, x.name, x.surname))
   }
 
-  def selectUser(username: Email): Option[User] = {
+  override def selectUser(username: Email): Option[User] = {
     Await.result(
       db.run(users
         .filter(_.email >= username.value).result), 10 seconds)
