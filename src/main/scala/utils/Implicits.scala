@@ -2,7 +2,7 @@ package utils
 
 import akka.actor.ActorSystem
 import akka.stream._
-import domain.requests.UserRegisterRequest
+import domain.api.UserRegisterRequest
 import server.database.model.User
 
 object Implicits {

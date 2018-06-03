@@ -16,11 +16,14 @@ class DefinitionParameters(tag: Tag) extends Table[DefinitionParameter](tag, Som
 
   def comparisonType = column[Int]("comparison_type")
 
-  def * = (id, alertDefinitionId, parameterName, parameterLimit, comparisonType).mapTo[DefinitionParameter]
+  def unit = column[String]("unit")
+
+  def * = (id, alertDefinitionId, parameterName, parameterLimit, comparisonType, unit).mapTo[DefinitionParameter]
 }
 
 final case class DefinitionParameter(id: Long,
                                      alertDefinitionId: Long,
                                      parameterName: String,
                                      parameterLimit: Int,
-                                     comparisonType: Int)
+                                     comparisonType: Int,
+                                     unit: String)

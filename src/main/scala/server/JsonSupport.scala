@@ -2,17 +2,17 @@ package server
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import domain.Domain._
-import domain.requests._
+import domain.api._
 import spray.json.{DefaultJsonProtocol, DeserializationException, JsArray, JsBoolean, JsNumber, JsObject, JsString, JsValue, JsonFormat, enrichAny}
 
 trait JsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
 
-  implicit object UsernameFormat extends JsonFormat[ID] {
-    def write(username: ID) = JsString(username.value.toString)
+  implicit object IdFormat extends JsonFormat[ID] {
+    def write(id: ID) = JsString(id.value.toString)
 
     def read(json: JsValue) = json match {
       case JsString(username) => ID(username.toInt)
-      case _ => throw DeserializationException("Username expected")
+      case _ => throw DeserializationException("Id expected")
     }
   }
 
@@ -61,66 +61,43 @@ trait JsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
     }
   }
 
-  implicit object AlertRequestFormat extends JsonFormat[AlertHistoryRequest] {
-    override def read(json: JsValue): AlertHistoryRequest =
-      json.asJsObject.getFields("")
+  implicit object DateFormat extends JsonFormat[Date] {
+    def write(date: Date) = JsString(date.value)
 
-    override def write(obj: AlertHistoryRequest): JsValue = JsString(s"${obj.username} ${obj.duration} ${obj.location} ${obj.date} ${obj.name}")
+    def read(json: JsValue) = json match {
+      case JsString(date) => Date(date)
+      case _ => throw DeserializationException("Date expected")
+    }
   }
 
-  implicit object AlertDefinitionParameterFormat extends JsonFormat[AlertDefinitionParameter] {
-    override def read(value: JsValue): AlertDefinitionParameter =
-      value.asJsObject.getFields("id", "parameterName", "parameterLimit", "comparisonType", "unit") match {
-        case Seq(JsNumber(id), JsString(paramName), JsNumber(limit), JsNumber(comparison), JsString(unitt)) =>
-          AlertDefinitionParameter(ID(id.intValue()), Name(paramName), limit.intValue(), comparison.intValue(), unitt)
-        case _ =>
-          throw new DeserializationException("AlertDefinitionParameter expected")
-      }
+  implicit object LocationFormat extends JsonFormat[Location] {
+    def write(location: Location) = JsString(location.value)
 
-    override def write(obj: AlertDefinitionParameter): JsValue = JsObject(
-      "id" -> JsNumber(obj.id.value),
-      "parameterName" -> JsString(obj.parameterName.value),
-      "parameterLimit" -> JsNumber(obj.parameterLimit),
-      "comparisonType" -> JsNumber(obj.comparisonType),
-      "unit" -> JsString(obj.unit)
-    )
+    def read(json: JsValue) = json match {
+      case JsString(location) => Location(location)
+      case _ => throw DeserializationException("Location expected")
+    }
   }
 
-  implicit object AlertDefinitionFormat extends JsonFormat[AlertDefinitionRequest] {
-    override def read(value: JsValue): AlertDefinitionRequest =
-      value.asJsObject.getFields("id", "userId", "alertName", "duration", "location", "active", "slackNotif", "emailNotif", "timestamp", "parameters") match {
-        case Seq(JsNumber(id), JsNumber(userId), JsString(name), JsNumber(duration), JsString(location), JsBoolean(active), JsBoolean(slack), JsBoolean(email), JsNumber(timestamp), JsArray(parameters)) =>
-          AlertDefinitionRequest(
-            ID(id.intValue()),
-            ID(userId.intValue()),
-            Name(name),
-            Duration(duration.intValue()),
-            Location(location),
-            active,
-            email,
-            slack,
-            timestamp.intValue(),
-            parameters.map(_.convertTo[AlertDefinitionParameter])
-          )
-        case _ =>
-          throw new DeserializationException("AlertDefinitionParameter expected")
-      }
+  implicit object DurationFormat extends JsonFormat[Duration] {
+    def write(duration: Duration) = JsNumber(duration.value)
 
-    override def write(obj: AlertDefinitionRequest): JsValue = JsObject(
-      "id" -> JsNumber(obj.id.value),
-      "userId" -> JsNumber(obj.userId.value),
-      "alertName" -> JsString(obj.alertName.value),
-      "duration" -> JsNumber(obj.duration.value),
-      "location" -> JsString(obj.location.value),
-      "active" -> JsBoolean(obj.active),
-      "slackNotif" -> JsBoolean(obj.slackNotif),
-      "emailNotif" -> JsBoolean(obj.emailNotif),
-      "timestamp" -> JsNumber(obj.timestamp),
-      "parameters" -> JsArray(obj.parameters.map(_.toJson).toVector)
-    )
+    def read(json: JsValue) = json match {
+      case JsNumber(duration) => Duration(duration.intValue())
+      case _ => throw DeserializationException("Duration expected")
+    }
   }
 
+
+  implicit val AlertHistoryEntryFormat = jsonFormat4(AlertHistoryEntry)
+  implicit val AlertHistoryRequestFormat = jsonFormat1(AlertHistoryResponse)
+
+  implicit val AlertDefinitionParameterFormat = jsonFormat5(AlertDefinitionParameter)
+  implicit val AlertDefinitionFormat = jsonFormat10(AlertDefinitionRequest)
 
   implicit val UserRegisterFormat = jsonFormat5(UserRegisterRequest)
+  implicit val UserUpdateRequestFormat = jsonFormat5(UserUpdateRequest)
   implicit val UserLoginFormat = jsonFormat2(UserLoginRequest)
+  implicit val UserLoginResponseFormat = jsonFormat5(UserLoginResponse)
+
 }
