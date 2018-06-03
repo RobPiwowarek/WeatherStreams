@@ -68,8 +68,8 @@ export class UserService {
 
   public sendLogin(user, password): Observable<User> {
     const userLogin = new UserLogin();
-    userLogin.username.value = user;
-    userLogin.password.value = password;
+    userLogin.username = user;
+    userLogin.password = password;
     return this.httpClient.post<User>(this.baseUrl + '/login', userLogin, this.httpOptions);
   }
 
