@@ -25,26 +25,29 @@ case class EmailNotification(user: String,
                              email: String,
                              alert: AlertDefinition,
                              parameters: Seq[DefinitionParameter]) {
-  val alertString = Helpers.alertParamToString(alert, parameters)
 
-  override def toString =
+  override def toString = {
+    val alertString = Helpers.alertParamToString(alert, parameters)
     s"""
        | Hi $user!\n\n
        | You are receiving this notification because conditions for one of your alerts were met:\n
        | $alertString\n\n
        | Best regards,\nWeather Streams
     """.stripMargin
+  }
 }
 
 case class SlackNotification(slackUsername: String,
                              alert: AlertDefinition,
                              parameters: Seq[DefinitionParameter]) {
-  val alertString = Helpers.alertParamToString(alert, parameters)
 
-  override def toString =
+
+  override def toString = {
+    val alertString = Helpers.alertParamToString(alert, parameters)
     s"""
        | Hi $slackUsername!\n\n
        | Conditions for one of your alerts were met:\n
        | $alertString
     """.stripMargin
+  }
 }
