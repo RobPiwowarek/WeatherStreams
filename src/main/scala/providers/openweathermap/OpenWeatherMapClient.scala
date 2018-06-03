@@ -18,7 +18,7 @@ object OpenWeatherMapClient extends WeatherClient {
 
   val httpClient = asyncHttpClient()
 
-  def getWeatherData(params: Seq[(String, String)]) = {
+  def getWeatherData(params: Seq[(String, String)]): Weather = {
     val url = weatherEndpoint.addParams(params) & ("appid", apiKey.value)
     val response = httpClient.prepareGet(weatherEndpoint.addParams(params) & ("appid", apiKey.value)).execute().get()
     response.getResponseBody().parseJson.convertTo[Weather]

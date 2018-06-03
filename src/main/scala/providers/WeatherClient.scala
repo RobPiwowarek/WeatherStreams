@@ -1,7 +1,7 @@
 package providers
 
-trait WeatherClient {
-  def getWeatherData(params: Seq[(String, String)]): WeatherResponse
-}
+import providers.openweathermap.Responses.Weather
 
-trait WeatherResponse
+trait WeatherClient {
+  def getWeatherData(params: Seq[(String, String)]): Weather
+}

@@ -1,6 +1,5 @@
 package providers.openweathermap
 
-import providers.WeatherResponse
 import spray.json.DefaultJsonProtocol
 
 object Responses extends DefaultJsonProtocol {
@@ -11,7 +10,7 @@ object Responses extends DefaultJsonProtocol {
                            rain: Option[Rain],
                            snow: Option[Snow],
                            weather: List[WeatherCondition],
-                           dt: BigInt) extends WeatherResponse //dt == timestamp
+                           dt: BigInt) //dt == timestamp
 
   final case class General(grnd_level: Option[BigDecimal],
                            humidity: BigDecimal,
