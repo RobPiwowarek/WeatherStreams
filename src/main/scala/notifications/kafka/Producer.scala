@@ -25,6 +25,7 @@ class Producer(mariaDb: DatabaseInterface, client: WeatherClient) extends Runnab
           val data = new ProducerRecord[String, Weather](config.topic, location, weather)
           producer.send(data)
         }
+        Thread.sleep(10 * 1000) // every 10 minutes
       }
     }
     finally {
