@@ -6,6 +6,10 @@ import server.database.model._
 
 trait DatabaseInterface {
 
+  def insertAlert(definition: AlertDefinition, params: Seq[(DefinitionParameter, Int)])
+
+  def insertAlertHistory(id: Long, param: DefinitionParameter, value: Int)
+
   def getAlertsFromLocation(location: Location) : Seq[AlertDefinition]
 
   def getLocationsWithActiveAlerts() : Seq[Location]

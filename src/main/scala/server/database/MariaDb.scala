@@ -1,5 +1,7 @@
 package server.database
 
+import java.time.Instant
+
 import domain.Domain.{Email, ID, Location}
 import domain.api.{AlertDefinitionParameter, AlertDefinitionRequest, UserUpdateRequest}
 import server.database.model.TableQueries._
@@ -15,14 +17,43 @@ class MariaDb extends DatabaseInterface {
   val databaseConfig = DatabaseConfig.forConfig[MySQLProfile]("maria-db")
   val db = databaseConfig.db
 
-  override def getAlertsFromLocation(location: Location) : Seq[AlertDefinition] = {
+  override def insertAlert(definition: AlertDefinition, params: Seq[(DefinitionParameter, Int)]) = {
+    val dattebayo = new java.sql.Date(java.util.Date.from(Instant.now()).getTime)
+    val action = alerts returning alerts.map(_.id) +=
+      Alert(
+        definition.id,
+        definition.weatherUserId,
+        definition.alertName,
+        dattebayo,
+        definition.location,
+        definition.duration)
+
+    val id = Await.result(db.run(action), 10 seconds)
+
+    params.foreach(param => insertAlertHistory(id, param._1, param._2))
+  }
+
+  override def insertAlertHistory(id: Long, param: DefinitionParameter, value: Int) = {
+    val action = alertHistories +=
+      AlertHistory(
+        param.id,
+        id,
+        param.parameterName,
+        value,
+        param.parameterLimit
+      )
+
+    Await.result(db.run(action), 10 seconds)
+  }
+
+  override def getAlertsFromLocation(location: Location): Seq[AlertDefinition] = {
     val query = alertDefinitions.result
     val defs = Await.result(db.run(query), 10 seconds)
 
     defs.filter(_.active).filter(_.location == location.value)
   }
 
-  override def getLocationsWithActiveAlerts() : Seq[Location] = {
+  override def getLocationsWithActiveAlerts(): Seq[Location] = {
     val query = alertDefinitions.result
     val defs = Await.result(db.run(query), 10 seconds)
 
