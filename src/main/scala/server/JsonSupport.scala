@@ -88,12 +88,14 @@ trait JsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
     }
   }
 
+  implicit val AlertResponseFormat = jsonFormat4(AlertResponse)
 
   implicit val AlertHistoryEntryFormat = jsonFormat4(AlertHistoryEntry)
   implicit val AlertHistoryRequestFormat = jsonFormat1(AlertHistoryResponse)
 
   implicit val AlertDefinitionParameterFormat = jsonFormat5(AlertDefinitionParameter)
   implicit val AlertDefinitionFormat = jsonFormat10(AlertDefinitionRequest)
+  implicit val AlertDefinitionResponseFormat = jsonFormat10(AlertDefinitionResponse)
 
   implicit val UserRegisterFormat = jsonFormat5(UserRegisterRequest)
   implicit val UserUpdateRequestFormat = jsonFormat5(UserUpdateRequest)

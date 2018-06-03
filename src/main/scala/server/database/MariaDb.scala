@@ -3,7 +3,7 @@ package server.database
 import domain.Domain.{Email, ID}
 import domain.api.{AlertDefinitionParameter, AlertDefinitionRequest, UserUpdateRequest}
 import server.database.model.TableQueries._
-import server.database.model.{AlertDefinition, DefinitionParameter, User}
+import server.database.model._
 import slick.basic.DatabaseConfig
 import slick.jdbc.MySQLProfile
 import slick.jdbc.MySQLProfile.api._
@@ -15,6 +15,26 @@ object MariaDb {
   val databaseConfig = DatabaseConfig.forConfig[MySQLProfile]("maria-db")
   val db = databaseConfig.db
 
+  def getAlertHistoryList(alertId: Int) = {
+    val query = alertHistories.filter(_.alertId === alertId.toLong)
+
+    Await
+      .result(db.run(query.result), 10 seconds)
+      .map(alert => AlertHistory(alert.id, alert.alertId, alert.parameterName, alert.parameterValue, alert.parameterLimit))
+  }
+
+  def getAlertList(userId: Int) = {
+    val query = alerts.filter(_.weatherUserId === userId.toLong)
+
+    Await
+      .result(db.run(query.result), 10 seconds)
+      .map(alert => Alert(alert.id, alert.weatherUserId, alert.name, alert.date, alert.location, alert.duration))
+  }
+
+  def deleteAlert(id: Int) = {
+    Await.result(db.run(alerts.filter(_.id === id.toLong).delete), 10 seconds)
+  }
+
   def deleteAlertDefinition(id: Int) = {
     val query = alertDefinitions.filter(_.id === id.toLong)
 
@@ -23,7 +43,7 @@ object MariaDb {
 
   def updateAlertDefinition(alertRequest: AlertDefinitionRequest) = {
     val query = alertDefinitions
-      .filter(_.id === alertRequest.id.value)
+      .filter(_.id === alertRequest.id.value.toLong)
       .map(alert => (alert.weatherUserId, alert.alertName, alert.duration, alert.location, alert.active, alert.emailNotif, alert.slackNotif))
 
     Await.result(
@@ -42,7 +62,7 @@ object MariaDb {
 
   def updateAlertDefinitionParameter(id: ID, param: AlertDefinitionParameter) = {
     val query = definitionParameters
-      .filter(_.id === param.id.value)
+      .filter(_.id === param.id.value.toLong)
       .map(param => (param.alertDefinitionId, param.parameterName, param.parameterLimit, param.comparisonType, param.unit))
 
     Await.result(
@@ -80,7 +100,7 @@ object MariaDb {
 
   def getAlertDefinitions(userId: Int) = {
     val query = alertDefinitions
-      .filter(_.weatherUserId === userId)
+      .filter(_.weatherUserId === userId.toLong)
 
     Await
       .result(db.run(query.result), 10 seconds)
@@ -100,13 +120,13 @@ object MariaDb {
 
   def getAlertDefinitionParameters(definitionId: Int) = {
     Await
-      .result(db.run(definitionParameters.filter(_.id === definitionId).result), 10 seconds)
+      .result(db.run(definitionParameters.filter(_.id === definitionId.toLong).result), 10 seconds)
       .map(param => DefinitionParameter(param.id, param.alertDefinitionId, param.parameterName, param.parameterLimit, param.comparisonType, param.unit))
   }
 
   def updateUser(updateUserRequest: UserUpdateRequest) = {
     val query = users
-      .filter(_.id === updateUserRequest.id.value)
+      .filter(_.id === updateUserRequest.id.value.toLong)
       .map(user => (user.email, user.slackId, user.name, user.surname))
 
     Await.result(
@@ -117,7 +137,7 @@ object MariaDb {
   def selectUserById(id: ID): Option[User] = {
     Await.result(
       db.run(users
-        .filter(_.id === id.value).result), 10 seconds)
+        .filter(_.id === id.value.toLong).result), 10 seconds)
       .headOption
       .map(x => User(x.id, x.email, x.password, x.slackId, x.name, x.surname))
   }

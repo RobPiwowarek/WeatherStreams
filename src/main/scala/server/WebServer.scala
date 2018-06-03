@@ -76,33 +76,52 @@ object WebServer extends JsonSupport with CorsSupport {
           }
         } ~ get {
           path("api" / "alert" / "user" / IntNumber) {
-            int => handleGetAlertList(int)
+            int =>
+              handleAlertListGet(int)
           }
         } ~ post {
-          path ("api" / )
+          path("api" / "alert" / IntNumber) {
+            int =>
+              handleAlertDelete(int)
+          }
+        } ~ get {
+          path("api" / "alert" / IntNumber / "history") {
+            int =>
+              handleAlertHistoryGet(int)
+          }
         }
-
-        put {
-          pathPrefix("alert") {
-            entity(as[AlertHistoryResponse]) {
-              request =>
-                handleAlertRequest(request)
-            }
-          }
-        } ~
-          put {
-            pathPrefix("user") {
-              entity(as[UserRegisterRequest]) {
-                request =>
-                  handleUserRequest(request)
-              }
-            }
-          }
       }
 
     val corsSupportedRoute = corsSupport(route)
 
     Http().bindAndHandle(corsSupportedRoute, "0.0.0.0", 8090)
+  }
+
+  private def handleAlertListGet(id: Int) = {
+    complete(
+      HttpResponse(
+      StatusCodes.OK,
+      entity = MariaDb
+        .getAlertList(id)
+        .map(alert => AlertResponse(ID(alert.id.toInt), Name(alert.name), Date(alert.date.toString), Location(alert.location)))
+        .map(_.toJson.toString)
+        .reduce(_ + '\n' + _)
+      ))
+  }
+
+  private def handleAlertDelete(id: Int) = {
+    MariaDb.deleteAlert(id)
+    complete(HttpResponse(StatusCodes.OK))
+  }
+
+  private def handleAlertHistoryGet(id: Int) = {
+    complete(
+      HttpResponse(
+        StatusCodes.OK,
+        entity = AlertHistoryResponse(MariaDb
+          .getAlertHistoryList(id)
+          .map(alert => AlertHistoryEntry(Name(alert.parameterName), alert.parameterValue, alert.parameterLimit, alert.parameterValue > alert.parameterLimit))).toJson.toString
+      ))
   }
 
   private def handleAlertDefinitionDelete(id: Int) = {
@@ -122,39 +141,30 @@ object WebServer extends JsonSupport with CorsSupport {
 
   private def handleAlertDefinitionGet(id: Int) = {
     complete(
-      StatusCodes.OK,
-      MariaDb
-        .getAlertDefinitions(id)
-        .map {
-          case (defi, params) =>
-            AlertDefinitionResponse(
-              ID(defi.id.toInt),
-              ID(defi.weatherUserId.toInt),
-              Name(defi.alertName),
-              Duration(defi.duration),
-              Location(defi.location),
-              defi.active,
-              defi.emailNotif,
-              defi.slackNotif,
-              Instant.now.getEpochSecond.toInt,
-              params.map(param => AlertDefinitionParameter(ID(param.id.toInt), Name(param.parameterName), param.parameterLimit, param.comparisonType, param.unit))
-            )
-        }
-        .map(_.toJson.toString)
+      HttpResponse(
+        StatusCodes.OK,
+        entity = MariaDb
+          .getAlertDefinitions(id)
+          .map {
+            case (defi, params) =>
+              AlertDefinitionResponse(
+                ID(defi.id.toInt),
+                ID(defi.weatherUserId.toInt),
+                Name(defi.alertName),
+                Duration(defi.duration),
+                Location(defi.location),
+                defi.active,
+                defi.emailNotif,
+                defi.slackNotif,
+                Instant.now.getEpochSecond.toInt,
+                params.map(param => AlertDefinitionParameter(ID(param.id.toInt), Name(param.parameterName), param.parameterLimit, param.comparisonType, param.unit))
+              )
+          }
+          .map(_.toJson.toString)
+          .reduce(_ + '\n' + _))
     )
   }
 
-  // todo:
-  private def handleAlertRequest(request: AlertHistoryResponse) = {
-    complete(HttpResponse(StatusCodes.OK))
-  }
-
-  // todo:
-  private def handleUserRequest(request: UserRegisterRequest) = {
-    complete(HttpResponse(StatusCodes.OK))
-  }
-
-  // todo:
   private def handleLoginRequest(request: UserLoginRequest) = {
     MariaDb.selectUser(request.username) match {
       case Some(user) =>

@@ -17,9 +17,9 @@ object Implicits {
       User(1,
         userRequest.name.value,
         userRequest.surname.value,
-        userRequest.slackId.map(_.value).getOrElse(""),
+        userRequest.slack.map(_.value).getOrElse(""),
         userRequest.password.value,
-        userRequest.email.value)
+        userRequest.username.value)
   }
 
 }
