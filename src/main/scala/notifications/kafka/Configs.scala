@@ -5,7 +5,7 @@ import java.util.Properties
 import com.typesafe.config.ConfigFactory
 import org.apache.kafka.clients.consumer.ConsumerConfig
 
-trait Config {
+trait NotifConsumerConfig {
   val groupId: String
   val server: String
   val topic: String
@@ -32,17 +32,17 @@ trait Config {
 object Configs {
   val conf = ConfigFactory.load()
 
-  object Email extends Config {
-    val groupId = conf.getString("email.kafka.groupId")
-    val server = conf.getString("email.kafka.server")
-    val topic = conf.getString("email.kafka.topic")
+  object Email extends NotifConsumerConfig {
+    val groupId = conf.getString("kafka.email.groupId")
+    val server = conf.getString("kafka.server")
+    val topic = conf.getString("kafka.email.topic")
     val serde = Serdes.Email.Deserializer
   }
 
-  object Slack extends Config {
-    val groupId = conf.getString("slack.kafka.groupId")
-    val server = conf.getString("slack.kafka.server")
-    val topic = conf.getString("slack.kafka.topic")
+  object Slack extends NotifConsumerConfig {
+    val groupId = conf.getString("kafka.slack.groupId")
+    val server = conf.getString("kafka.server")
+    val topic = conf.getString("kafka.slack.topic")
     val serde = Serdes.Slack.Deserializer
   }
 }

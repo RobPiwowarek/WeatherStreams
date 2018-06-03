@@ -7,7 +7,7 @@ import akka.stream.ActorMaterializer
 import notifications._
 import org.apache.kafka.clients.consumer.KafkaConsumer
 
-class Consumer[Notification](sender: ActorRef, config: Config) extends Runnable {
+class Consumer[Notification](sender: ActorRef, config: NotifConsumerConfig) extends Runnable {
   val consumer = new KafkaConsumer[String, Notification](config.props)
 
   override def run(): Unit = {
