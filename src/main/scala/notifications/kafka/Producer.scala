@@ -12,7 +12,8 @@ object Producer extends Runnable {
   val client = OpenWeatherMapClient
   val mariaDb = new MariaDb()
 
-  def getActiveLocations(): Seq[String] = ???
+  def getActiveLocations(): Seq[String] = mariaDb.getLocationsWithActiveAlerts().map(_.value)
+
   def getLocationData(location: String): Weather = {
     client.getWeatherData(Seq(("q", location)))
   }
