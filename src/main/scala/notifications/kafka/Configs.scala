@@ -2,9 +2,11 @@ package notifications.kafka
 
 import java.util.Properties
 
+import com.lightbend.kafka.scala.streams.DefaultSerdes
 import com.typesafe.config.ConfigFactory
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.streams.StreamsConfig
 
 trait NotifConsumerConfig {
   val groupId: String
@@ -50,6 +52,27 @@ trait WeatherProducerConfig {
   }
 }
 
+trait AlertStreamConfig {
+  val appId: String
+  val server: String
+  val inputTopic : String
+  val emailTopic: String
+  val slackTopic: String
+
+  def props = {
+    val properties = new Properties()
+    properties.put(StreamsConfig.APPLICATION_ID_CONFIG, appId)
+
+    properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, server)
+
+    properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, DefaultSerdes.stringSerde)
+
+    properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, DefaultSerdes.stringSerde)
+
+    properties
+  }
+}
+
 object Configs {
   val conf = ConfigFactory.load()
 
@@ -71,6 +94,14 @@ object Configs {
     val clientId = conf.getString("kafka.fetcher.clientId")
     val server = conf.getString("kafka.server")
     val topic = conf.getString("kafka.fetcher.topic")
-    val serde = Serdes.Slack.Deserializer
+    val serde = Serdes.Weather.Deserializer
+  }
+
+  object Stream extends AlertStreamConfig {
+    val appId = conf.getString("kafka.stream.appId")
+    val server = conf.getString("kafka.server")
+    val inputTopic = Producer.topic
+    val emailTopic = Email.topic
+    val slackTopic = Slack.topic
   }
 }
