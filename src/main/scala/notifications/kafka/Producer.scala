@@ -1,15 +1,14 @@
 package notifications.kafka
 
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
+import providers.WeatherClient
 import providers.openweathermap.OpenWeatherMapClient
 import providers.openweathermap.Responses.Weather
 import server.database.DatabaseInterface
 
-class Producer(mariaDb: DatabaseInterface) extends Runnable {
+class Producer(mariaDb: DatabaseInterface, client: WeatherClient) extends Runnable {
   val config = Configs.Producer
   val producer = new KafkaProducer[String, Weather](config.props)
-
-  val client = OpenWeatherMapClient
 
   def getActiveLocations(): Seq[String] = mariaDb.getLocationsWithActiveAlerts().map(_.value)
 
