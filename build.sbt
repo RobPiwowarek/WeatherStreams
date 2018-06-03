@@ -35,6 +35,7 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.3.2",
   "com.sun.mail" % "javax.mail" % "1.6.1",
   "com.github.gilbertw1" %% "slack-scala-client" % "0.2.3",
+  "com.lightbend" %% "kafka-streams-scala" % "0.2.1",
 
   "org.scalatest"          %% "scalatest"          % "3.2.0-SNAP10"    % Test,
   "com.github.tomakehurst" % "wiremock-standalone" % "2.15.0"          % Test,
