@@ -58,7 +58,6 @@ object Serdes {
 
     override def serializer() = Serializer
   }
-
   object Weather extends ScalaSerde[Responses.Weather] with JsonSupport {
     final object Deserializer extends Deserializer[Responses.Weather] {
       override def deserialize(data: Array[Byte]): Option[Responses.Weather] = {
