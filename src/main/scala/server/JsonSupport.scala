@@ -3,7 +3,7 @@ package server
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import domain.Domain._
 import domain.api._
-import spray.json.{DefaultJsonProtocol, DeserializationException, JsArray, JsBoolean, JsNumber, JsObject, JsString, JsValue, JsonFormat, enrichAny}
+import spray.json.{DefaultJsonProtocol, DeserializationException, JsNumber, JsString, JsValue, JsonFormat}
 
 trait JsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
 

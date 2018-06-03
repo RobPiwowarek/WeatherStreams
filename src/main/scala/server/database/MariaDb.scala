@@ -11,7 +11,7 @@ import slick.jdbc.MySQLProfile.api._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-object MariaDb extends DatabaseInterface{
+object MariaDb extends DatabaseInterface {
   val databaseConfig = DatabaseConfig.forConfig[MySQLProfile]("maria-db")
   val db = databaseConfig.db
 

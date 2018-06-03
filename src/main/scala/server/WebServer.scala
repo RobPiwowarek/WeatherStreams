@@ -14,8 +14,8 @@ import domain.api._
 import notifications.{EmailFileConfig, EmailNotification, Sender, SlackFileConfig}
 import providers.WeatherClient
 import providers.openweathermap._
-import server.database.{DatabaseInterface, MariaDb}
 import server.database.model.User
+import server.database.{DatabaseInterface, MariaDb}
 import spray.json._
 
 object WebServer extends JsonSupport with CorsSupport {
@@ -103,12 +103,12 @@ object WebServer extends JsonSupport with CorsSupport {
   private def handleAlertListGet(id: Int) = {
     complete(
       HttpResponse(
-      StatusCodes.OK,
-      entity = database
-        .getAlertList(id)
-        .map(alert => AlertResponse(ID(alert.id.toInt), Name(alert.name), Date(alert.date.toString), Location(alert.location)))
-        .map(_.toJson.toString)
-        .reduce(_ + '\n' + _)
+        StatusCodes.OK,
+        entity = database
+          .getAlertList(id)
+          .map(alert => AlertResponse(ID(alert.id.toInt), Name(alert.name), Date(alert.date.toString), Location(alert.location)))
+          .map(_.toJson.toString)
+          .reduce(_ + '\n' + _)
       ))
   }
 
