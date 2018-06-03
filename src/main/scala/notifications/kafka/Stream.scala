@@ -3,19 +3,17 @@ package notifications.kafka
 import com.lightbend.kafka.scala.streams.{DefaultSerdes, StreamsBuilderS}
 import domain.Domain.ID
 import notifications.{EmailNotification, SlackNotification}
-import org.apache.kafka.streams.{Consumed, KafkaStreams}
 import org.apache.kafka.streams.kstream.Produced
+import org.apache.kafka.streams.{Consumed, KafkaStreams}
 import providers.openweathermap.Responses.Weather
-import server.database.MariaDb
+import server.database.DatabaseInterface
 import server.database.model.{AlertDefinition, DefinitionParameter, User}
 
 // takes weather data and produces email and slack notifications if alerts were triggered
 // also saves alert occurrences in the database
-object Stream extends Runnable {
+class Stream(mariaDb: DatabaseInterface) extends Runnable {
   val conf = Configs.Stream
   val builder = new StreamsBuilderS()
-
-  val mariaDb = new MariaDb()
 
   val inputStream = builder.stream[String, Weather](
     conf.inputTopic)(
@@ -41,16 +39,16 @@ object Stream extends Runnable {
       .flatMap {
         case (location: String, weather: Weather) => {
           def alerts = for {
-              alert <- getActiveAlerts(location)
-              parameters = mariaDb
-                .getAlertDefinitionParameters(alert.id.toInt)
-            } yield (alert, parameters)
+            alert <- getActiveAlerts(location)
+            parameters = mariaDb
+              .getAlertDefinitionParameters(alert.id.toInt)
+          } yield (alert, parameters)
 
           val triggeredAlerts = alerts.filter(_._2.forall(conditionIsMet(_, weather)))
 
           triggeredAlerts
             .foreach {
-              case(alert, parameters) => {
+              case (alert, parameters) => {
                 // TODO - add to database
               }
             }
@@ -76,7 +74,7 @@ object Stream extends Runnable {
     // email
     outputStreams(0)
       .mapValues {
-        case(alert, parameters) => {
+        case (alert, parameters) => {
           val user: User = mariaDb.selectUserById(ID(alert.weatherUserId.toInt)).get
           EmailNotification(s"${user.name} ${user.surname}", user.email, alert, parameters)
         }
@@ -86,7 +84,7 @@ object Stream extends Runnable {
     // slack
     outputStreams(1)
       .mapValues {
-        case(alert, parameters) => {
+        case (alert, parameters) => {
           val user: User = mariaDb.selectUserById(ID(alert.weatherUserId.toInt)).get
           SlackNotification(user.slackId, alert, parameters)
         }
