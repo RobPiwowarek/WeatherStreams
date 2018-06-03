@@ -1,7 +1,7 @@
 package notifications.kafka
 
 import com.lightbend.kafka.scala.streams.{DefaultSerdes, StreamsBuilderS}
-import domain.Domain.ID
+import domain.Domain.{ID, Location}
 import notifications.{EmailNotification, SlackNotification}
 import org.apache.kafka.streams.kstream.Produced
 import org.apache.kafka.streams.{Consumed, KafkaStreams}
@@ -20,9 +20,25 @@ class Stream(mariaDb: DatabaseInterface) extends Runnable {
     Consumed.`with`[String, Weather](DefaultSerdes.stringSerde, Serdes.Weather)
   )
 
-  def getActiveAlerts(location: String): Seq[AlertDefinition] = ???
-
-  def conditionIsMet(param: DefinitionParameter, weather: Weather): Boolean = ???
+  def getActiveAlerts(location: String): Seq[AlertDefinition] = mariaDb.getAlertsFromLocation(Location(location))
+  def getValue(param: DefinitionParameter, weather: Weather) = {
+    param.parameterName match {
+      case "TEMP" => weather.main.temp
+      case "WIND" => weather.wind.speed
+      case "RAIN" => weather.rain match {
+        case Some(rain) => rain.`3h`.get
+        case None => BigDecimal("0")
+      }
+      case "HUMI" => weather.main.humidity
+    }
+  }
+  def conditionIsMet(param: DefinitionParameter, weather: Weather): Boolean = {
+    val value = getValue(param, weather)
+    param.comparisonType match {
+      case 1 => value < param.parameterLimit
+      case 2 => value > param.parameterLimit
+    }
+  }
 
   def isEmail(key: String, dummy: Any) = {
     key == "email"
@@ -49,7 +65,10 @@ class Stream(mariaDb: DatabaseInterface) extends Runnable {
           triggeredAlerts
             .foreach {
               case (alert, parameters) => {
-                // TODO - add to database
+                val tuples = parameters.map {
+                  param => (param, getValue(param, weather).toInt)
+                }
+                mariaDb.insertAlert(alert, tuples)
               }
             }
 
