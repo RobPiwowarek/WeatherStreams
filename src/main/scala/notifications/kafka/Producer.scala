@@ -10,10 +10,12 @@ object Producer extends Runnable {
   val producer = new KafkaProducer[String, Weather](config.props)
 
   val client = OpenWeatherMapClient
-  val mariaDb = MariaDb
+  val mariaDb = new MariaDb()
 
-  def getActiveLocations(): Seq[String] = ??? // TODO - fetch locations from mariadb that have active alerts
-  def getLocationData(location: String): Weather = ??? // TODO - use client to fetch weather data for given location
+  def getActiveLocations(): Seq[String] = ???
+  def getLocationData(location: String): Weather = {
+    client.getWeatherData(Seq(("q", location)))
+  }
 
   override def run(): Unit = {
     try {

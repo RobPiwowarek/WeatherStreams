@@ -1,6 +1,7 @@
 package notifications.kafka
 
 import com.lightbend.kafka.scala.streams.{DefaultSerdes, StreamsBuilderS}
+import domain.Domain.ID
 import notifications.{EmailNotification, SlackNotification}
 import org.apache.kafka.streams.{Consumed, KafkaStreams}
 import org.apache.kafka.streams.kstream.Produced
@@ -14,7 +15,7 @@ object Stream extends Runnable {
   val conf = Configs.Stream
   val builder = new StreamsBuilderS()
 
-  val mariaDb = MariaDb
+  val mariaDb = new MariaDb()
 
   val inputStream = builder.stream[String, Weather](
     conf.inputTopic)(
@@ -23,21 +24,13 @@ object Stream extends Runnable {
 
   def getActiveAlerts(location: String): Seq[AlertDefinition] = ???
 
-  def conditionIsMet(alert: AlertDefinition, weather: Weather): Boolean = ???
+  def conditionIsMet(param: DefinitionParameter, weather: Weather): Boolean = ???
 
-  def alerts = for {
-    record <- inputStream
-    weather <- record._2
-    allAlerts = getActiveAlerts(record._1).filter(conditionIsMet(_, weather))
-    emailAlerts = allAlerts.filter(_.emailNotif)
-    slackAlerts = allAlerts.filter(_.slackNotif)
-  } yield (emailAlerts, slackAlerts)
-
-  def isEmail(key: String, alertDef: AlertDefinition) = {
+  def isEmail(key: String, dummy: Any) = {
     key == "email"
   }
 
-  def isSlack(key: String, alertDef: AlertDefinition) = {
+  def isSlack(key: String, dummy: Any) = {
     key == "slack"
   }
 
@@ -48,24 +41,32 @@ object Stream extends Runnable {
       .flatMap {
         case (location: String, weather: Weather) => {
           def alerts = for {
-            alert <- getActiveAlerts(location)
-              .filter(_.active)
-              .filter(conditionIsMet(_, weather))
-          } yield (alert)
+              alert <- getActiveAlerts(location)
+              parameters = mariaDb
+                .getAlertDefinitionParameters(alert.id.toInt)
+            } yield (alert, parameters)
 
-          alerts.foreach {
-            alert => {
-              // TODO - save Alert occurrence to database?
+          val triggeredAlerts = alerts.filter(_._2.forall(conditionIsMet(_, weather)))
+
+          triggeredAlerts
+            .foreach {
+              case(alert, parameters) => {
+                // TODO - add to database
+              }
             }
-          }
-          
+
+
           def emailAlerts = for {
-            alert <- alerts.filter(_.emailNotif)
-          } yield ("email", alert)
+            tuple <- triggeredAlerts.filter(_._1.emailNotif)
+            alert = tuple._1
+            params = tuple._2
+          } yield ("email", (alert, params))
 
           def slackAlerts = for {
-            alert <- alerts.filter(_.slackNotif)
-          } yield ("slack", alert)
+            tuple <- triggeredAlerts.filter(_._1.slackNotif)
+            alert = tuple._1
+            params = tuple._2
+          } yield ("slack", (alert, params))
 
           emailAlerts ++ slackAlerts
         }
@@ -75,10 +76,9 @@ object Stream extends Runnable {
     // email
     outputStreams(0)
       .mapValues {
-        alert => {
-          val user: User = ??? // TODO - get user data?
-          val param: DefinitionParameter = ??? // TODO ???
-          EmailNotification(s"${user.name} ${user.surname}", user.email, param.toString) // TODO
+        case(alert, parameters) => {
+          val user: User = mariaDb.selectUserById(ID(alert.weatherUserId.toInt)).get
+          EmailNotification(s"${user.name} ${user.surname}", user.email, alert, parameters)
         }
       }
       .to(conf.emailTopic)(Produced.`with`(DefaultSerdes.stringSerde, Serdes.Email))
@@ -86,10 +86,9 @@ object Stream extends Runnable {
     // slack
     outputStreams(1)
       .mapValues {
-        alert => {
-          val user: User = ??? // TODO - get user data?
-          val param: DefinitionParameter = ??? // TODO ???
-          SlackNotification(user.slackId, param.toString) // TODO
+        case(alert, parameters) => {
+          val user: User = mariaDb.selectUserById(ID(alert.weatherUserId.toInt)).get
+          SlackNotification(user.slackId, alert, parameters)
         }
       }
       .to(conf.slackTopic)(Produced.`with`(DefaultSerdes.stringSerde, Serdes.Slack))
