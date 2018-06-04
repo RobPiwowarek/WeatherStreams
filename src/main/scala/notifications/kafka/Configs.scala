@@ -58,7 +58,7 @@ trait WeatherProducerConfig {
 trait AlertStreamConfig {
   val appId: String
   val server: String
-  val inputTopic : String
+  val inputTopic: String
   val emailTopic: String
   val slackTopic: String
 
@@ -68,9 +68,11 @@ trait AlertStreamConfig {
 
     properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, server)
 
-    properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, DefaultSerdes.stringSerde)
+    properties.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, "500")
 
-    properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, DefaultSerdes.stringSerde)
+    properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, DefaultSerdes.stringSerde.getClass)
+
+    properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, DefaultSerdes.stringSerde.getClass)
 
     properties
   }

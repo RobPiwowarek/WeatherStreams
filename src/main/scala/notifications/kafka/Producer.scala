@@ -28,7 +28,7 @@ class Producer(mariaDb: DatabaseInterface, client: WeatherClient, config: Weathe
         for (location <- getActiveLocations()) {
           produceLocationData(location)
         }
-        Thread.sleep(10 * 1000) // every 10 minutes
+        Thread.sleep(10 * 60 * 1000) // every 10 minutes
       }
     }
     finally {
