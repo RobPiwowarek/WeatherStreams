@@ -55,10 +55,11 @@
              	<p-table [value]="alertHistoryParams">
 				    <ng-template pTemplate="header">
 				        <tr>
-				            <th style="width: 30%" >Name</th>
-				            <th style="width: 20%" >Value</th>
-				            <th style="width: 20%" >Limit</th>
-				            <th style="width: 30%" >Out of limit</th>
+				            <th style="width: 26%" >Name</th>
+				            <th style="width: 17%" >Value</th>
+				            <th style="width: 17%" >Limit</th>
+				            <th style="width: 15%" >Unit</th>
+				            <th style="width: 25%" >Out of limit</th>
 				        </tr>
 				    </ng-template>
 				    <ng-template pTemplate="body" let-rowData>
@@ -71,6 +72,9 @@
 				            </td>
 							<td >
 								{{rowData.limit}}
+				            </td>
+				            <td >
+								{{rowData.unit}}
 				            </td>
 				            <td>
 								{{rowData.outOfLimit}}

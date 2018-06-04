@@ -1,4 +1,4 @@
-import { UserService } from '../user/user.service';
+import {UserService} from '../user/user.service';
 import {AlertDefinitionParameter} from './alert-definition-params';
 import {AlertConfigService} from './alert-config.service';
 import {AlertDefinition} from './alert-definition';
@@ -30,7 +30,7 @@ export class ConfigComponent implements OnInit {
     this.cols = [
       {field: 'alertName', header: 'Name'},
       {field: 'location', header: 'Location'},
-      {field: 'duration', header: 'Duration'},
+      //      {field: 'duration', header: 'Duration'},
       {field: 'active', header: 'Active'},
       {field: 'emailNotif', header: 'Email'},
       {field: 'slackNotif', header: 'Slack'},
@@ -40,7 +40,9 @@ export class ConfigComponent implements OnInit {
       {label: 'Rain', value: 'Rain'},
       {label: 'Wind', value: 'Wind'},
       {label: 'Temperature', value: 'Temperature'},
-      {label: 'Humidity', value: 'Humidity'}
+      {label: 'Humidity', value: 'Humidity'},
+      {label: 'Pressure', value: 'Pressure'},
+      {label: 'Cloudy', value: 'Cloudy'}
     ];
     this.signs = [
       {label: '>', value: 1},
@@ -61,7 +63,7 @@ export class ConfigComponent implements OnInit {
   }
 
   save() {
-    this.definition.parameters = this.parameters.map(p => this.mapViewToParam(p));
+    this.definition.parameters = this.parameters.map(p => this.alertConfigService.mapViewToParam(p));
 
     if (this.newDefinition) {
       this.alertConfigService.createAlertDefinition(this.definition).subscribe(
@@ -111,76 +113,7 @@ export class ConfigComponent implements OnInit {
     this.newDefinition = false;
     this.definition = this.cloneDefinition(event.data);
     this.displayDialog = true;
-    this.parameters = this.definition.parameters.map(p => this.mapParamToView(p));
-  }
-
-  mapParamToView(param: AlertDefinitionParameter): AlertDefinitionParameterView {
-    const view = new AlertDefinitionParameterView();
-    view.id = param.id;
-    view.limit = param.parameterLimit;
-    view.unit = param.unit;
-    switch (param.parameterName) {
-      case 'TEMP':
-        view.name = 'Temperature';
-        view.unit = 'C';
-        break;
-      case 'WIND':
-        view.name = 'Wind';
-        view.unit = 'm/s';
-        break;
-      case 'RAIN':
-        view.name = 'Rain';
-        view.unit = 'mm';
-        break;
-      case 'HUMI':
-        view.name = 'Humidity';
-        view.unit = '%';
-        break;
-      default:
-        view.name = param.parameterName;
-    }
-    switch (param.comparisonType) {
-      case 2:
-        view.type = '>';
-        break;
-      default:
-        view.type = '<';
-    }
-    return view;
-  }
-
-  mapViewToParam(view: AlertDefinitionParameterView): AlertDefinitionParameter {
-    const param = new AlertDefinitionParameter();
-    param.id = view.id;
-    param.parameterLimit = Number(view.limit);
-    param.unit = view.unit;
-
-    switch (view.name) {
-      case 'Temperature':
-        param.parameterName = 'TEMP';
-        break;
-      case 'Wind':
-        param.parameterName = 'WIND';
-        break;
-      case 'Rain':
-        param.parameterName = 'RAIN';
-        break;
-      case 'Humidity':
-        param.parameterName = 'HUMI';
-        break;
-      default:
-        param.parameterName = '';
-    }
-
-    switch (view.type) {
-      case '>':
-        param.comparisonType = 2;
-        break;
-      default:
-        param.comparisonType = 1;
-    }
-
-    return param;
+    this.parameters = this.definition.parameters.map(p => this.alertConfigService.mapParamToView(p));
   }
 
   cloneDefinition(d: AlertDefinition): AlertDefinition {

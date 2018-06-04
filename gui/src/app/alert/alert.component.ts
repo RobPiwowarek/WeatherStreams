@@ -1,8 +1,10 @@
 import {UserService} from '../user/user.service';
 import {Alert} from './alert';
 import {AlertHistoryParam} from './alert-history-param';
+import {AlertHistoryParamView} from './alert-history-param-view';
 import {AlertService} from './alert-service';
 import {Component, OnInit} from '@angular/core';
+import { AbstractWalker } from 'tslint';
 
 @Component({
   selector: 'app-alert',
@@ -17,7 +19,7 @@ export class AlertComponent implements OnInit {
   alerts: Alert[];
   selectedAlert: Alert;
   alert: Alert;
-  alertHistoryParams: AlertHistoryParam[];
+  alertHistoryParams: AlertHistoryParamView[];
 
   constructor(private alertService: AlertService, private userService: UserService) {}
 
@@ -31,8 +33,12 @@ export class AlertComponent implements OnInit {
     this.username = this.userService.currentUser.name;
 
     this.alertService.getAlerts().subscribe(
-      d => this.alerts = d,
+      d => this.onAlertsLoad(d),
       e => console.log(e));
+  }
+
+  private onAlertsLoad(alerts) {
+    this.alerts = alerts;
   }
 
   onRowSelect(event) {
@@ -40,10 +46,13 @@ export class AlertComponent implements OnInit {
     this.displayDialog = true;
 
     this.alertService.getAlertHitory(this.alert.id).subscribe(
-      d => this.alertHistoryParams = d,
+      d => this.onHistoryLoad(d),
       e => console.log(e));
   }
 
+  private onHistoryLoad(hist: AlertHistoryParam[]) {
+    this.alertHistoryParams = hist.map(h => this.alertService.mapParamToParamView(h));
+  }
 
   delete() {
     const index = this.alerts.indexOf(this.selectedAlert);
