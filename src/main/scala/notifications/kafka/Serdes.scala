@@ -7,6 +7,7 @@ import spray.json.JsonParser.ParsingException
 import spray.json._
 
 object Serdes {
+
   object Email extends ScalaSerde[EmailNotification] with JsonSupport {
 
     final object Deserializer extends Deserializer[EmailNotification] {
@@ -58,7 +59,9 @@ object Serdes {
 
     override def serializer() = Serializer
   }
+
   object Weather extends ScalaSerde[Responses.Weather] with JsonSupport {
+
     final object Deserializer extends Deserializer[Responses.Weather] {
       override def deserialize(data: Array[Byte]): Option[Responses.Weather] = {
         try {
@@ -83,4 +86,5 @@ object Serdes {
 
     override def serializer() = Serializer
   }
+
 }

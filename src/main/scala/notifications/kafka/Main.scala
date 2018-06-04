@@ -1,6 +1,7 @@
 package notifications.kafka
 
 import java.util.concurrent.Executors
+
 import providers.openweathermap.OpenWeatherMapClient
 import server.database.MariaDb
 

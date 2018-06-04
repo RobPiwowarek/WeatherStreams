@@ -17,7 +17,7 @@ object Helpers {
           s"${parameter.parameterName} ${comparison} ${parameter.parameterLimit} ${parameter.unit}"
         }
       }
-        .mkString("\n")
+      .mkString("\n")
     s"$paramStrings\nin ${alert.location}"
 
   }

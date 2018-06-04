@@ -1,6 +1,6 @@
 package notifications
 
-import akka.actor.{Actor, ActorSystem}
+import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import notifications.Errors.{InternalError, SendError}
 import slack.api.BlockingSlackApiClient

@@ -56,5 +56,7 @@ object Consumers {
   val slackSender = new Slack(SlackFileConfig)
 
   object Email extends EmailConsumer(emailSender, Configs.Email)
+
   object Slack extends SlackConsumer(slackSender, Configs.Slack)
+
 }

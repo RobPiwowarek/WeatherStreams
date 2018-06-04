@@ -1,7 +1,5 @@
 package notifications.kafka
 
-import java.util.concurrent.{Executors, TimeUnit}
-
 import com.lightbend.kafka.scala.streams.DefaultSerdes
 import domain.Domain
 import domain.Domain.{ID, Location}
@@ -96,28 +94,44 @@ class StreamIntegrationTest extends FlatSpec with EmbeddedKafka with MockFactory
     // very ugly way to workaround mocks/stubs not verifying calls from other threads
     val mariaDbStub = new DatabaseInterface {
       var insertCalled = false
+
       override def insertAlert(definition: AlertDefinition, parameters: Seq[(DefinitionParameter, Int)]): Unit = {
         assert(definition == alerts.head)
         assert(parameters.length == 1)
         assert(parameters.head == (params.head, 40))
         insertCalled = true
       }
+
       override def getAlertsFromLocation(location: Location): Seq[AlertDefinition] = alerts
+
       override def selectUserById(id: ID): Option[User] = Some(user)
+
       override def getAlertDefinitionParameters(definitionId: Int): Seq[DefinitionParameter] = params
 
       override def updateAlertDefinitionParameter(id: ID, param: AlertDefinitionParameter): Int = 0
+
       override def insertAlertDefinitionParameter(id: Long, param: AlertDefinitionParameter): Int = 0
+
       override def deleteAlert(id: Int): Int = 0
+
       override def getAlertList(userId: Int): Seq[Alert] = Seq()
+
       override def insertAlertHistory(id: Long, param: DefinitionParameter, value: Int): Unit = {}
+
       override def updateAlertDefinition(alertRequest: AlertDefinitionRequest): Unit = {}
+
       override def updateUser(updateUserRequest: UserUpdateRequest): Int = 0
+
       override def selectUser(username: Domain.Email): Option[User] = None
+
       override def getAlertHistoryList(alertId: Int): Seq[AlertHistory] = Seq()
+
       override def getAlertDefinitions(userId: Int): Seq[(AlertDefinition, Seq[DefinitionParameter])] = Seq()
+
       override def insertAlertDefinition(alertRequest: AlertDefinitionRequest): Unit = {}
+
       override def deleteAlertDefinition(id: Int): Int = 0
+
       override def getLocationsWithActiveAlerts(): Seq[Location] = Seq(Location("Test"))
     }
 

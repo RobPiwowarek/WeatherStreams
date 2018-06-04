@@ -2,7 +2,6 @@ package notifications.kafka
 
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import providers.WeatherClient
-import providers.openweathermap.OpenWeatherMapClient
 import providers.openweathermap.Responses.Weather
 import server.database.DatabaseInterface
 

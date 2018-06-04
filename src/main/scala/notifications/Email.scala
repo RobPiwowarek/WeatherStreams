@@ -3,7 +3,6 @@ package notifications
 import java.net.SocketTimeoutException
 import java.util.{Date, Properties}
 
-import akka.actor.Actor
 import com.typesafe.config._
 import javax.mail._
 import javax.mail.internet.{InternetAddress, MimeMessage}
