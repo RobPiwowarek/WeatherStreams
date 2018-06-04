@@ -4,7 +4,6 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
-import notifications.{EmailFileConfig, Sender, SlackFileConfig}
 import providers.WeatherClient
 import providers.openweathermap._
 import server.database.MariaDbProvider
@@ -16,8 +15,6 @@ object WebServer extends CorsSupport {
 
   val routeProvider = new WebServerRouteProvider(new MariaDbProvider)
   val weatherClient: WeatherClient = OpenWeatherMapClient
-  val notificationSender: ActorRef = system.actorOf(Props(classOf[Sender], EmailFileConfig, SlackFileConfig), name = "NotificationSender")
-
   def main(args: Array[String]): Unit = {
     val route: Route = routeProvider.routeSetup()
 

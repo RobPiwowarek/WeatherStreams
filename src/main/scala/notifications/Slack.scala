@@ -14,7 +14,7 @@ object SlackFileConfig extends SlackConfig {
   val token = conf.getString("slack.token")
 }
 
-class Slack(config: SlackConfig) extends BlockingSlackApiClient(token = config.token) with Sender {
+class Slack(config: SlackConfig) extends BlockingSlackApiClient(token = config.token) {
   implicit val system = ActorSystem()
 
   def getUserId(slackUsername: String) = {
@@ -40,8 +40,5 @@ class Slack(config: SlackConfig) extends BlockingSlackApiClient(token = config.t
     }
   }
 
-  def send(e: Notification) = {
-    case e: SlackNotification =>
-      sendMessage(e.slackUsername, e.toString)
-  }
+  def send(e: SlackNotification) = sendMessage(e.slackUsername, e.toString)
 }
