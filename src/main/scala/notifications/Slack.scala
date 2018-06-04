@@ -40,5 +40,12 @@ class Slack(config: SlackConfig) extends BlockingSlackApiClient(token = config.t
     }
   }
 
-  def send(e: SlackNotification) = sendMessage(e.slackUsername, e.toString)
+  def send(e: SlackNotification) = {
+    try {
+      sendMessage(e.slackUsername, e.toString)
+    }
+    catch {
+      case e: NullPointerException => {} // ugly hack
+    }
+  }
 }

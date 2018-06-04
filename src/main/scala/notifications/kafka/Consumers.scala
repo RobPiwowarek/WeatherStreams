@@ -38,9 +38,7 @@ class SlackConsumer(sender: Slack, config: NotifConsumerConfig) extends Runnable
 
         records.forEach {
           record => {
-            println(record)
             sender.send(record.value())
-            println("sent!")
           }
         }
       }
