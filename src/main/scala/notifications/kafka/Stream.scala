@@ -12,14 +12,8 @@ import server.database.model.{AlertDefinition, DefinitionParameter, User}
 // takes weather data and produces email and slack notifications if alerts were triggered
 // also saves alert occurrences in the database
 class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnable {
-  val builder = new StreamsBuilderS()
-
-  val inputStream = builder.stream[String, Weather](
-    conf.inputTopic)(
-    Consumed.`with`[String, Weather](DefaultSerdes.stringSerde, Serdes.Weather)
-  )
-
   def getActiveAlerts(location: String): Seq[AlertDefinition] = mariaDb.getAlertsFromLocation(Location(location))
+
   def getValue(param: DefinitionParameter, weather: Weather) = {
     param.parameterName match {
       case "TEMP" => weather.main.temp
@@ -31,6 +25,7 @@ class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnab
       case "HUMI" => weather.main.humidity
     }
   }
+
   def conditionIsMet(param: DefinitionParameter, weather: Weather): Boolean = {
     val value = getValue(param, weather)
     param.comparisonType match {
@@ -47,8 +42,13 @@ class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnab
     key == "slack"
   }
 
-  override def run(): Unit = {
-    val streams = new KafkaStreams(builder.build(), conf.props)
+  def createStream() = {
+    val builder = new StreamsBuilderS()
+
+    val inputStream = builder.stream[String, Weather](
+      conf.inputTopic)(
+      Consumed.`with`(DefaultSerdes.stringSerde, Serdes.Weather)
+    )
 
     val outputStreams = inputStream
       .flatMap {
@@ -67,7 +67,7 @@ class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnab
                 val tuples = parameters.map {
                   param => (param, getValue(param, weather).toInt)
                 }
-                mariaDb.insertAlert(alert, tuples)
+                mariaDb.insertAlert(alert, tuples) // save alert in the database
               }
             }
 
@@ -109,11 +109,21 @@ class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnab
       }
       .to(conf.slackTopic)(Produced.`with`(DefaultSerdes.stringSerde, Serdes.Slack))
 
-    try {
-      streams.start()
-    }
-    finally {
-      streams.close()
-    }
+    new KafkaStreams(builder.build(), conf.props)
+  }
+
+  override def run(): Unit = {
+    val streams = createStream()
+    streams.start()
+
+    Runtime.getRuntime.addShutdownHook(new Thread {
+      override def run(): Unit = {
+        try {
+          streams.close()
+        }
+        finally {
+        }
+      }
+    })
   }
 }

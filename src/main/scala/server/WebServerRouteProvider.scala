@@ -8,7 +8,7 @@ import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
 import domain.Domain._
 import domain.api._
 import notifications.EmailNotification
-import server.WebServer.{notificationSender, weatherClient}
+import server.WebServer.weatherClient
 import server.database.model.User
 import server.database.{DatabaseInterface, DatabaseProvider}
 import spray.json._
