@@ -7,6 +7,9 @@ import com.typesafe.config.ConfigFactory
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.streams.StreamsConfig
+import providers.WeatherClient
+import providers.openweathermap.OpenWeatherMapClient
+import server.database.{DatabaseInterface, MariaDb}
 
 trait NotifConsumerConfig {
   val groupId: String
@@ -94,7 +97,7 @@ object Configs {
     val clientId = conf.getString("kafka.fetcher.clientId")
     val server = conf.getString("kafka.server")
     val topic = conf.getString("kafka.fetcher.topic")
-    val serde = Serdes.Weather.Deserializer
+    val serde = Serdes.Weather.Serializer
   }
 
   object Stream extends AlertStreamConfig {

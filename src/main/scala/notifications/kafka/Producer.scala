@@ -6,8 +6,7 @@ import providers.openweathermap.OpenWeatherMapClient
 import providers.openweathermap.Responses.Weather
 import server.database.DatabaseInterface
 
-class Producer(mariaDb: DatabaseInterface, client: WeatherClient) extends Runnable {
-  val config = Configs.Producer
+class Producer(mariaDb: DatabaseInterface, client: WeatherClient, config: WeatherProducerConfig) extends Runnable {
   val producer = new KafkaProducer[String, Weather](config.props)
 
   def getActiveLocations(): Seq[String] = mariaDb.getLocationsWithActiveAlerts().map(_.value)
@@ -16,14 +15,18 @@ class Producer(mariaDb: DatabaseInterface, client: WeatherClient) extends Runnab
     client.getWeatherData(Seq(("q", location)))
   }
 
+  def produceLocationData(location: String) = {
+    val weather = getLocationData(location)
+    val data = new ProducerRecord[String, Weather](config.topic, location, weather)
+    producer.send(data)
+  }
+
   override def run(): Unit = {
     try {
       while (true) {
         // send out weather data for active locations, location name being the message key
         for (location <- getActiveLocations()) {
-          val weather = getLocationData(location)
-          val data = new ProducerRecord[String, Weather](config.topic, location, weather)
-          producer.send(data)
+          produceLocationData(location)
         }
         Thread.sleep(10 * 1000) // every 10 minutes
       }

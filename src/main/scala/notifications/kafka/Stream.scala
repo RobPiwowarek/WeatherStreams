@@ -11,8 +11,7 @@ import server.database.model.{AlertDefinition, DefinitionParameter, User}
 
 // takes weather data and produces email and slack notifications if alerts were triggered
 // also saves alert occurrences in the database
-class Stream(mariaDb: DatabaseInterface) extends Runnable {
-  val conf = Configs.Stream
+class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnable {
   val builder = new StreamsBuilderS()
 
   val inputStream = builder.stream[String, Weather](

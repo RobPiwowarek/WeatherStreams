@@ -2,6 +2,8 @@ package notifications
 
 import server.database.model.{AlertDefinition, DefinitionParameter}
 
+sealed trait Notification
+
 object Helpers {
   def alertParamToString(alert: AlertDefinition, parameters: Seq[DefinitionParameter]) = {
     val paramStrings = parameters
@@ -24,7 +26,7 @@ object Helpers {
 case class EmailNotification(user: String,
                              email: String,
                              alert: AlertDefinition,
-                             parameters: Seq[DefinitionParameter]) {
+                             parameters: Seq[DefinitionParameter]) extends Notification {
 
   override def toString = {
     val alertString = Helpers.alertParamToString(alert, parameters)
@@ -39,7 +41,7 @@ case class EmailNotification(user: String,
 
 case class SlackNotification(slackUsername: String,
                              alert: AlertDefinition,
-                             parameters: Seq[DefinitionParameter]) {
+                             parameters: Seq[DefinitionParameter]) extends Notification {
 
 
   override def toString = {

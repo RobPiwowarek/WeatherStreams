@@ -30,7 +30,7 @@ object EmailFileConfig extends EmailConfig {
   val timeout = conf.getString("email.timeout") //ms
 }
 
-class Email(conf: EmailConfig) extends Actor {
+class Email(conf: EmailConfig) extends Sender {
   val properties = new Properties()
   properties.put("mail.transport.protocol", "smtp")
   properties.put("mail.smtp.host", conf.host)
@@ -76,7 +76,7 @@ class Email(conf: EmailConfig) extends Actor {
     }
   }
 
-  def receive = {
+  def send(e: Notification) = {
     case e: EmailNotification =>
       sendMessage(e.email, "Weather Streams Alert", e.toString())
   }

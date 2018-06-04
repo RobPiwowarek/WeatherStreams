@@ -2,12 +2,10 @@ package notifications.kafka
 
 import java.util.Collections
 
-import akka.actor.{ActorRef, ActorSystem, Props}
-import akka.stream.ActorMaterializer
 import notifications._
 import org.apache.kafka.clients.consumer.KafkaConsumer
 
-class Consumer[Notification](sender: ActorRef, config: NotifConsumerConfig) extends Runnable {
+class Consumer[Notification](sender: Sender, config: NotifConsumerConfig) extends Runnable {
   val consumer = new KafkaConsumer[String, Notification](config.props)
 
   override def run(): Unit = {
@@ -18,7 +16,7 @@ class Consumer[Notification](sender: ActorRef, config: NotifConsumerConfig) exte
 
         records.forEach {
           record => {
-            sender ! record.value()
+            sender.send(record.value())
           }
         }
       }
@@ -32,12 +30,8 @@ class Consumer[Notification](sender: ActorRef, config: NotifConsumerConfig) exte
 // provides ready-to-run Runnables for Email and Slack
 // simply run them in a Java-style thread pool
 object Consumers {
-  implicit val system = ActorSystem()
-  implicit val materializer = ActorMaterializer()
-  implicit val executionContext = system.dispatcher
-
-  val emailSender = system.actorOf(Props(classOf[Email], EmailFileConfig), name = "EmailSender")
-  val slackSender = system.actorOf(Props(classOf[Slack], SlackFileConfig), name = "SlackSender")
+  val emailSender = new Email(EmailFileConfig)
+  val slackSender = new Slack(SlackFileConfig)
 
   object Email extends Consumer[EmailNotification](emailSender, Configs.Email)
   object Slack extends Consumer[SlackNotification](slackSender, Configs.Slack)
