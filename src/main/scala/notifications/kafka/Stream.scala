@@ -94,7 +94,7 @@ class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnab
       .mapValues {
         case (alert, parameters) => {
           val user: User = mariaDb.selectUserById(ID(alert.weatherUserId.toInt)).get
-          EmailNotification(s"${user.name} ${user.surname}", user.email, alert, parameters)
+          EmailNotification(s"${user.name} ${user.surname}", user.email, alert.location, parameters)
         }
       }
       .to(conf.emailTopic)(Produced.`with`(DefaultSerdes.stringSerde, Serdes.Email))
@@ -104,7 +104,7 @@ class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnab
       .mapValues {
         case (alert, parameters) => {
           val user: User = mariaDb.selectUserById(ID(alert.weatherUserId.toInt)).get
-          SlackNotification(user.slackId, alert, parameters)
+          SlackNotification(user.slackId, alert.location, parameters)
         }
       }
       .to(conf.slackTopic)(Produced.`with`(DefaultSerdes.stringSerde, Serdes.Slack))

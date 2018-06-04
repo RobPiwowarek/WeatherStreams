@@ -40,8 +40,8 @@ class StreamIntegrationTest extends FlatSpec with EmbeddedKafka with MockFactory
 
     val params = Seq(DefinitionParameter(3, 2, "RAIN", 50, 1, "mm"))
 
-    val expectedEmail = EmailNotification(s"${user.name} ${user.surname}", user.email, alerts.head, params)
-    val expectedSlack = SlackNotification(user.slackId, alerts.head, params)
+    val expectedEmail = EmailNotification(s"${user.name} ${user.surname}", user.email, alerts.head.location, params)
+    val expectedSlack = SlackNotification(user.slackId, alerts.head.location, params)
 
     val mariaDbStub = stub[DatabaseInterface]
     mariaDbStub.getAlertsFromLocation _ when Location("Test") returns alerts

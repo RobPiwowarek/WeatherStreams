@@ -12,7 +12,7 @@ class EmailConsumer(sender: Email, config: NotifConsumerConfig) extends Runnable
     consumer.subscribe(Collections.singletonList(config.topic))
     try {
       while (true) {
-        val records = consumer.poll(1000).records(config.topic)
+        val records = consumer.poll(30).records(config.topic)
 
         records.forEach {
           record => {
@@ -34,11 +34,13 @@ class SlackConsumer(sender: Slack, config: NotifConsumerConfig) extends Runnable
     consumer.subscribe(Collections.singletonList(config.topic))
     try {
       while (true) {
-        val records = consumer.poll(1000).records(config.topic)
+        val records = consumer.poll(30).records(config.topic)
 
         records.forEach {
           record => {
+            println(record)
             sender.send(record.value())
+            println("sent!")
           }
         }
       }

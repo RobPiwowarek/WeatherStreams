@@ -9,8 +9,8 @@ import spray.json._
 class SerdesTest extends FlatSpec with JsonSupport {
   val alertDef = AlertDefinition(0, 0, "", 0, "", false, false, false)
   val params = Seq(DefinitionParameter(0, 0, "test", 0, 1, "test"), DefinitionParameter(1, 0, "test2", 10, 2, "test2"))
-  val email = EmailNotification("test", "test@example.com", alertDef, params)
-  val slack = SlackNotification("test", alertDef, params)
+  val email = EmailNotification("test", "test@example.com", alertDef.location, params)
+  val slack = SlackNotification("test", alertDef.location, params)
   val weather = Weather(
     General(None, 0, 0, None, 30, 0, 0),
     Wind(10, 0),

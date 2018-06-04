@@ -5,7 +5,7 @@ import server.database.model.{AlertDefinition, DefinitionParameter}
 sealed trait Notification
 
 object Helpers {
-  def alertParamToString(alert: AlertDefinition, parameters: Seq[DefinitionParameter]) = {
+  def alertParamToString(location: String, parameters: Seq[DefinitionParameter]) = {
     val paramStrings = parameters
       .map {
         parameter => {
@@ -18,18 +18,18 @@ object Helpers {
         }
       }
       .mkString("\n")
-    s"$paramStrings\nin ${alert.location}"
+    s"$paramStrings\nin ${location}"
 
   }
 }
 
 case class EmailNotification(user: String,
                              email: String,
-                             alert: AlertDefinition,
+                             location: String,
                              parameters: Seq[DefinitionParameter]) extends Notification {
 
   override def toString = {
-    val alertString = Helpers.alertParamToString(alert, parameters)
+    val alertString = Helpers.alertParamToString(location, parameters)
     s"""
        | Hi $user!\n\n
        | You are receiving this notification because conditions for one of your alerts were met:\n
@@ -40,12 +40,12 @@ case class EmailNotification(user: String,
 }
 
 case class SlackNotification(slackUsername: String,
-                             alert: AlertDefinition,
+                             location: String,
                              parameters: Seq[DefinitionParameter]) extends Notification {
 
 
   override def toString = {
-    val alertString = Helpers.alertParamToString(alert, parameters)
+    val alertString = Helpers.alertParamToString(location, parameters)
     s"""
        | Hi $slackUsername!\n\n
        | Conditions for one of your alerts were met:\n
