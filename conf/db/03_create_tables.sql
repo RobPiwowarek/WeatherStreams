@@ -25,6 +25,7 @@ CREATE TABLE definition_parameter(
  parameter_name	VARCHAR(50) NOT NULL,
  parameter_limit INTEGER,
  comparison_type INTEGER,
+ unit            VARCHAR(50) NOT NULL,
  FOREIGN KEY(alert_definition_id) REFERENCES alert_definition(id)
 );
 

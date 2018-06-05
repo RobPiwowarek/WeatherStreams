@@ -104,7 +104,7 @@ class WebServerRouteProvider(databaseProvider: DatabaseProvider) extends JsonSup
         StatusCodes.OK,
         entity = database
           .getAlertHistoryList(id)
-          .map(alert => AlertHistoryEntry(Name(alert.parameterName), alert.parameterValue, alert.parameterLimit, alert.parameterValue > alert.parameterLimit)).toJson.toString
+          .map(alert => AlertHistoryEntry(Name(alert.parameterName), alert.parameterValue, alert.parameterLimit, alert.parameterLimit match { case Some(value) =>  alert.parameterValue > value case _ => false})).toJson.toString
       ))
   }
 

@@ -40,7 +40,7 @@ class MariaDb extends DatabaseInterface {
         id,
         param.parameterName,
         value,
-        param.parameterLimit
+        Some(param.parameterLimit)
       )
 
     Await.result(db.run(action), 10 seconds)

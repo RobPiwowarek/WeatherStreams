@@ -14,7 +14,7 @@ class AlertHistories(tag: Tag) extends Table[AlertHistory](tag, Some("weather"),
 
   def parameterValue = column[Int]("parameter_value")
 
-  def parameterLimit = column[Int]("parameter_limit")
+  def parameterLimit = column[Option[Int]]("parameter_limit")
 
   def * = (id, alertId, parameterName, parameterValue, parameterLimit).mapTo[AlertHistory]
 }
@@ -23,4 +23,4 @@ final case class AlertHistory(id: Long,
                               alertId: Long,
                               parameterName: String,
                               parameterValue: Int,
-                              parameterLimit: Int)
+                              parameterLimit: Option[Int])

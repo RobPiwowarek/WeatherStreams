@@ -16,7 +16,7 @@ class DefinitionParameters(tag: Tag) extends Table[DefinitionParameter](tag, Som
 
   def comparisonType = column[Int]("comparison_type")
 
-  def unit = column[String]("unit")
+  def unit = column[String]("unit", O.Default("-"))
 
   def * = (id, alertDefinitionId, parameterName, parameterLimit, comparisonType, unit).mapTo[DefinitionParameter]
 }
