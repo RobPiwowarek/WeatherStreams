@@ -8,6 +8,8 @@ import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.streams.StreamsConfig
 
+import scala.concurrent.duration.{Duration, MINUTES}
+
 trait NotifConsumerConfig {
   val groupId: String
   val server: String
@@ -33,6 +35,7 @@ trait NotifConsumerConfig {
 }
 
 trait WeatherProducerConfig {
+  val delay: Duration
   val clientId: String
   val server: String
   val topic: String
@@ -93,6 +96,7 @@ object Configs {
   }
 
   object Producer extends WeatherProducerConfig {
+    val delay = Duration(10, MINUTES)
     val clientId = conf.getString("kafka.fetcher.clientId")
     val server = conf.getString("kafka.server")
     val topic = conf.getString("kafka.fetcher.topic")

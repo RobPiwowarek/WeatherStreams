@@ -1,8 +1,9 @@
 package notifications.kafka
 
-import notifications.{EmailNotification, JsonSupport, SlackNotification}
+import notifications.{EmailNotification, SlackNotification}
 import org.scalatest.FlatSpec
 import providers.openweathermap.Responses.{Clouds, General, Rain, Weather, Wind}
+import server.JsonSupport
 import server.database.model.{AlertDefinition, DefinitionParameter}
 import spray.json._
 

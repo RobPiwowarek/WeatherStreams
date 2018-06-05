@@ -1,6 +1,6 @@
 package notifications
 
-import server.database.model.{AlertDefinition, DefinitionParameter}
+import server.database.model.DefinitionParameter
 
 sealed trait Notification
 
@@ -12,44 +12,41 @@ object Helpers {
           val comparison = parameter.comparisonType match {
             case 1 => "<"
             case 2 => ">"
+            case _ => throw new IllegalArgumentException("Invalid comparison value, 1 or 2 expected")
           }
 
-          s"${parameter.parameterName} ${comparison} ${parameter.parameterLimit} ${parameter.unit}"
+          s"${parameter.parameterName} $comparison ${parameter.parameterLimit} ${parameter.unit}"
         }
       }
       .mkString("\n")
-    s"$paramStrings\nin ${location}"
+    s"$paramStrings\nin $location"
 
   }
 }
 
-case class EmailNotification(user: String,
+final case class EmailNotification(user: String,
                              email: String,
                              location: String,
                              parameters: Seq[DefinitionParameter]) extends Notification {
 
-  override def toString = {
-    val alertString = Helpers.alertParamToString(location, parameters)
+  override def toString =
     s"""
        | Hi $user!\n\n
        | You are receiving this notification because conditions for one of your alerts were met:\n
-       | $alertString\n\n
+       | ${Helpers.alertParamToString(location, parameters)}\n\n
        | Best regards,\nWeather Streams
     """.stripMargin
-  }
 }
 
-case class SlackNotification(slackUsername: String,
+final case class SlackNotification(slackUsername: String,
                              location: String,
                              parameters: Seq[DefinitionParameter]) extends Notification {
 
 
-  override def toString = {
-    val alertString = Helpers.alertParamToString(location, parameters)
+  override def toString =
     s"""
        | Hi $slackUsername!\n\n
        | Conditions for one of your alerts were met:\n
-       | $alertString
+       | ${Helpers.alertParamToString(location, parameters)}
     """.stripMargin
-  }
 }

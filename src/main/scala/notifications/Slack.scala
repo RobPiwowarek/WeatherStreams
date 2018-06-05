@@ -45,7 +45,10 @@ class Slack(config: SlackConfig) extends BlockingSlackApiClient(token = config.t
       sendMessage(e.slackUsername, e.toString)
     }
     catch {
-      case e: NullPointerException => {} // ugly hack
+      // ugly hack - because for some reason the BlockingSlackApiClient
+      // throws the exception after successfully sending a message
+      // should probably investigate now, but for now let's silently ignore it
+      case e: NullPointerException => {}
     }
   }
 }

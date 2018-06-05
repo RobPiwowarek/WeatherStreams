@@ -33,6 +33,7 @@ class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnab
     param.comparisonType match {
       case 1 => value < param.parameterLimit
       case 2 => value > param.parameterLimit
+      case _ => throw new IllegalArgumentException("Invalid comparisonType, expected 1 or 2")
     }
   }
 
@@ -119,13 +120,7 @@ class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnab
     streams.start()
 
     Runtime.getRuntime.addShutdownHook(new Thread {
-      override def run(): Unit = {
-        try {
-          streams.close()
-        }
-        finally {
-        }
-      }
+      override def run(): Unit = streams.close()
     })
   }
 }

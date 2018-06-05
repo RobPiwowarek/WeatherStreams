@@ -5,11 +5,12 @@ import domain.Domain
 import domain.Domain.{ID, Location}
 import domain.api.{AlertDefinitionParameter, AlertDefinitionRequest, UserUpdateRequest}
 import net.manub.embeddedkafka.{EmbeddedKafka, EmbeddedKafkaConfig}
-import notifications.{EmailNotification, JsonSupport, SlackNotification}
+import notifications.{EmailNotification, SlackNotification}
 import org.apache.kafka.common.serialization.{Deserializer, Serializer}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import providers.openweathermap.Responses.{Clouds, General, Rain, Weather, Wind}
+import server.JsonSupport
 import server.database.DatabaseInterface
 import server.database.model._
 import spray.json._

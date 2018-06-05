@@ -3,6 +3,9 @@ package server
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import domain.Domain._
 import domain.api._
+import notifications.{EmailNotification, SlackNotification}
+import providers.openweathermap.Responses
+import server.database.model.{AlertDefinition, DefinitionParameter}
 import spray.json.{DefaultJsonProtocol, DeserializationException, JsNumber, JsString, JsValue, JsonFormat}
 
 trait JsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
@@ -101,5 +104,11 @@ trait JsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
   implicit val UserUpdateRequestFormat = jsonFormat5(UserUpdateRequest)
   implicit val UserLoginFormat = jsonFormat2(UserLoginRequest)
   implicit val UserLoginResponseFormat = jsonFormat5(UserLoginResponse)
+
+  implicit val AlertDefinitionDbFormat = jsonFormat8(AlertDefinition)
+  implicit val DefinitionParameterFormat = jsonFormat6(DefinitionParameter)
+  implicit val EmailNotificationFormat = jsonFormat4(EmailNotification)
+  implicit val SlackNotificationFormat = jsonFormat3(SlackNotification)
+  implicit val WeatherFormat = Responses.weatherFormat
 
 }

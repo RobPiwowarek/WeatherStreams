@@ -1,8 +1,9 @@
 package notifications.kafka
 
 import com.lightbend.kafka.scala.streams.{Deserializer, ScalaSerde, Serializer}
-import notifications.{EmailNotification, JsonSupport, SlackNotification}
+import notifications.{EmailNotification, SlackNotification}
 import providers.openweathermap.Responses
+import server.JsonSupport
 import spray.json.JsonParser.ParsingException
 import spray.json._
 
@@ -42,9 +43,7 @@ object Serdes {
           Some(jsonData.convertTo[SlackNotification])
         }
         catch {
-          case e: ParsingException => {
-            None
-          }
+          case e: ParsingException => None
         }
       }
     }

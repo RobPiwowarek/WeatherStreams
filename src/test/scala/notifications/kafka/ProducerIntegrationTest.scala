@@ -4,13 +4,15 @@ import java.util.concurrent.Executors
 
 import domain.Domain.Location
 import net.manub.embeddedkafka.{EmbeddedKafka, EmbeddedKafkaConfig}
-import notifications.JsonSupport
 import org.apache.kafka.common.serialization.Deserializer
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import providers.WeatherClient
 import providers.openweathermap.Responses._
+import server.JsonSupport
 import server.database.DatabaseInterface
+
+import scala.concurrent.duration.{Duration, SECONDS}
 
 class ProducerIntegrationTest extends FlatSpec with EmbeddedKafka with MockFactory with JsonSupport {
   val fakeWeather = Weather(
@@ -38,6 +40,7 @@ class ProducerIntegrationTest extends FlatSpec with EmbeddedKafka with MockFacto
       implicit val deserializer: Deserializer[Weather] = Serdes.Weather.Deserializer
 
       val config = new WeatherProducerConfig {
+        override val delay: Duration = Duration(1, SECONDS)
         override val server: String = s"localhost:${actualConfig.kafkaPort}"
         override val clientId: String = "producerTest"
         override val serde: AnyRef = Serdes.Weather.Serializer
