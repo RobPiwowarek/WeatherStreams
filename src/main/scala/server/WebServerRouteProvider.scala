@@ -89,8 +89,7 @@ class WebServerRouteProvider(databaseProvider: DatabaseProvider) extends JsonSup
         entity = database
           .getAlertList(id)
           .map(alert => AlertResponse(ID(alert.id.toInt), Name(alert.name), Date(alert.date.toString), Location(alert.location)))
-          .map(_.toJson.toString)
-          .reduce(_ + '\n' + _)
+          .toJson.toString
       ))
   }
 
@@ -173,6 +172,6 @@ class WebServerRouteProvider(databaseProvider: DatabaseProvider) extends JsonSup
     notificationSender ! EmailNotification("user", request.username.value, body)
   }
 
-  private def userToUserLoginResponse(user: User) = UserLoginResponse(ID(user.id.toInt), Email(user.email), Name(user.name), Surname(user.surname), SlackId(user.slackId))
+  private def userToUserLoginResponse(user: User) = UserLoginResponse(ID(user.id.toInt), Email(user.email), Name(user.name), Surname(user.surname), SlackId(user.slackId)
 
 }

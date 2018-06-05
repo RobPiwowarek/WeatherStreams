@@ -1,6 +1,7 @@
 package server.database.model
 
 import slick.jdbc.MySQLProfile.api._
+import slick.sql.SqlProfile.ColumnOption.Nullable
 
 class Users(tag: Tag) extends Table[User](tag, Some("weather"), "weather_user") {
   def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
@@ -13,7 +14,7 @@ class Users(tag: Tag) extends Table[User](tag, Some("weather"), "weather_user") 
 
   def password = column[String]("password")
 
-  def email = column[String]("email")
+  def email = column[String]("email", Nullable)
 
   def * = (id, email, password, slackId, name, surname).mapTo[User]
 }
