@@ -14,7 +14,7 @@ import server.database.model.{AlertDefinition, DefinitionParameter, User}
 class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnable {
   def getActiveAlerts(location: String): Seq[AlertDefinition] = mariaDb.getAlertsFromLocation(Location(location))
 
-  def getValue(param: DefinitionParameter, weather: Weather) = {
+  def getValue(param: DefinitionParameter, weather: Weather): BigDecimal = {
     param.parameterName match {
       case "TEMP" => weather.main.temp
       case "WIND" => weather.wind.speed
@@ -23,6 +23,8 @@ class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnab
         case None => BigDecimal("0")
       }
       case "HUMI" => weather.main.humidity
+      case "PRES" => weather.main.pressure
+      case "CLOU" => BigDecimal(weather.clouds.all)
     }
   }
 

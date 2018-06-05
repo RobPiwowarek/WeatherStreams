@@ -11,6 +11,8 @@ class StreamTest extends FlatSpec with MockFactory {
   // wind = 10
   // rain = 40
   // humi = 0
+  // pres = 0
+  // clou = 0
   val fakeWeather = Weather(
     General(None, 0, 0, None, 25, 0, 0),
     Wind(10, 0),
@@ -52,5 +54,21 @@ class StreamTest extends FlatSpec with MockFactory {
 
     assert(!stream.conditionIsMet(DefinitionParameter(0, 0, "HUMI", 50, 2, "%"), fakeWeather)) // humi > 50
     assert(stream.conditionIsMet(DefinitionParameter(0, 0, "HUMI", 10, 1, "%"), fakeWeather)) // humi < 10
+  }
+
+  it should "detect if conditions for a PRES (pressure) parameter were met" in {
+    val mariaDbStub = stub[DatabaseInterface]
+    val stream = new Stream(mariaDbStub, Configs.Stream)
+
+    assert(!stream.conditionIsMet(DefinitionParameter(0, 0, "PRES", 50, 2, "%"), fakeWeather)) // pres > 50
+    assert(stream.conditionIsMet(DefinitionParameter(0, 0, "PRES", 10, 1, "%"), fakeWeather)) // pres < 10
+  }
+
+  it should "detect if conditions for a CLOU (cloudiness) parameter were met" in {
+    val mariaDbStub = stub[DatabaseInterface]
+    val stream = new Stream(mariaDbStub, Configs.Stream)
+
+    assert(!stream.conditionIsMet(DefinitionParameter(0, 0, "CLOU", 50, 2, "%"), fakeWeather)) // clou > 50
+    assert(stream.conditionIsMet(DefinitionParameter(0, 0, "CLOU", 10, 1, "%"), fakeWeather)) // clou < 10
   }
 }
