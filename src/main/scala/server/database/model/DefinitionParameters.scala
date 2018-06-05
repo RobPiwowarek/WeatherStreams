@@ -3,7 +3,7 @@ package server.database.model
 import server.database.model.TableQueries._
 import slick.jdbc.MySQLProfile.api._
 
-class DefinitionParameters(tag: Tag) extends Table[DefinitionParameter](tag, Some("weather"), "alert_definition") {
+class DefinitionParameters(tag: Tag) extends Table[DefinitionParameter](tag, Some("weather"), "definition_parameter") {
   def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 
   def alertDefinitionId = column[Long]("alert_definition_id")
