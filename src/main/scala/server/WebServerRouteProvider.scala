@@ -143,10 +143,8 @@ class WebServerRouteProvider(databaseProvider: DatabaseProvider) extends JsonSup
                 Instant.now.getEpochSecond.toInt,
                 params.map(param => AlertDefinitionParameter(ID(param.id.toInt), Name(param.parameterName), param.parameterLimit, param.comparisonType, param.unit))
               )
-          }
-          .map(_.toJson.toString)
-          .reduce(_ + '\n' + _))
-    )
+          }.toJson.toString
+    ))
   }
 
   private def handleLoginRequest(request: UserLoginRequest) = {
