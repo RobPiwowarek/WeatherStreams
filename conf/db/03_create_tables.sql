@@ -2,8 +2,8 @@ CREATE TABLE weather_user (
  id        		BIGINT AUTO_INCREMENT PRIMARY KEY,
  email			VARCHAR(250) NOT NULL,
  slack			VARCHAR(250),
- name     		VARCHAR(250),
- surname     	VARCHAR(250),
+ name     		VARCHAR(50),
+ surname     	VARCHAR(50),
  password 		VARCHAR(250) NOT NULL
 );
 
@@ -19,7 +19,7 @@ CREATE TABLE alert_definition(
  FOREIGN KEY(weather_user_id) REFERENCES weather_user(id)  
 );
 
-CREATE TABLE definition_parmeter(
+CREATE TABLE definition_parameter(
  id        		BIGINT AUTO_INCREMENT PRIMARY KEY,
  alert_definition_id BIGINT NOT NULL,
  parameter_name	VARCHAR(50) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE alert(
  location		VARCHAR(100) NOT NULL,
  duration		INTEGER,
  FOREIGN KEY(weather_user_id) REFERENCES weather_user(id)  
-)
+);
 
 CREATE TABLE alert_history(
  id        		BIGINT AUTO_INCREMENT PRIMARY KEY,

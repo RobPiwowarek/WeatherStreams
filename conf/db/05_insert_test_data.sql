@@ -5,7 +5,7 @@ INSERT INTO alert_definition(id, weather_user_id, alert_name, location, active, 
 (1, 1, 'Zimno i pada w Warszawie', 'Warsaw', true, true),
 (2, 1, 'Gorąco w Warszawie', 'Warsaw', false, true);
 
-INSERT INTO definition_parmeter(id, alert_definition_id, parameter_name, parameter_limit, comparison_type) values 
+INSERT INTO definition_parameter(id, alert_definition_id, parameter_name, parameter_limit, comparison_type) values 
 (1, 1, 'TEMP', 5, 1),
 (2, 1, 'WIND', 10, 2),
 (3, 2, 'TEMP', 30, 2);
