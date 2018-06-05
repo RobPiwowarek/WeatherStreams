@@ -2,7 +2,7 @@ package domain.api
 
 import domain.Domain._
 
-final case class AlertDefinitionRequest(id: ID,
+final case class AlertDefinitionRequest(id: Option[ID],
                                         userId: ID,
                                         alertName: Name,
                                         duration: Duration,

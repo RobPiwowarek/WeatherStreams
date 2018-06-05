@@ -88,7 +88,7 @@ class MariaDb extends DatabaseInterface {
 
   override def updateAlertDefinition(alertRequest: AlertDefinitionRequest) = {
     val query = alertDefinitions
-      .filter(_.id === alertRequest.id.value.toLong)
+      .filter(_.id === alertRequest.id.get.value.toLong)
       .map(alert => (alert.weatherUserId, alert.alertName, alert.duration, alert.location, alert.active, alert.emailNotif, alert.slackNotif))
 
     Await.result(
@@ -102,13 +102,15 @@ class MariaDb extends DatabaseInterface {
             alertRequest.emailNotif,
             alertRequest.slackNotif))), 10 seconds)
 
-    alertRequest.parameters.foreach(updateAlertDefinitionParameter(alertRequest.id, _))
+    alertRequest.parameters.foreach(updateAlertDefinitionParameter(alertRequest.id.get, _))
   }
 
   override def updateAlertDefinitionParameter(id: ID, param: AlertDefinitionParameter): Int = {
     val query = definitionParameters
       .filter(_.id === param.id.value.toLong)
       .map(param => (param.alertDefinitionId, param.parameterName, param.parameterLimit, param.comparisonType, param.unit))
+
+
 
     Await.result(
       db.run(query
@@ -117,7 +119,7 @@ class MariaDb extends DatabaseInterface {
 
   override def insertAlertDefinition(alertRequest: AlertDefinitionRequest) = {
     val action = alertDefinitions returning alertDefinitions.map(_.id) += AlertDefinition(
-      alertRequest.id.value,
+      alertRequest.id.map(_.value.toLong).getOrElse(0l),
       alertRequest.userId.value,
       alertRequest.alertName.value,
       alertRequest.duration.value,
