@@ -1,6 +1,6 @@
 package notifications
 
-import akka.actor.{Actor, ActorSystem}
+import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import notifications.Errors.{InternalError, SendError}
 import slack.api.BlockingSlackApiClient
@@ -14,7 +14,7 @@ object SlackFileConfig extends SlackConfig {
   val token = conf.getString("slack.token")
 }
 
-class Slack(config: SlackConfig) extends BlockingSlackApiClient(token = config.token) with Actor {
+class Slack(config: SlackConfig) extends BlockingSlackApiClient(token = config.token) {
   implicit val system = ActorSystem()
 
   def getUserId(slackUsername: String) = {
@@ -40,8 +40,15 @@ class Slack(config: SlackConfig) extends BlockingSlackApiClient(token = config.t
     }
   }
 
-  def receive = {
-    case e: SlackNotification =>
+  def send(e: SlackNotification) = {
+    try {
       sendMessage(e.slackUsername, e.toString)
+    }
+    catch {
+      // ugly hack - because for some reason the BlockingSlackApiClient
+      // throws the exception after successfully sending a message
+      // should probably investigate now, but for now let's silently ignore it
+      case e: NullPointerException => {}
+    }
   }
 }

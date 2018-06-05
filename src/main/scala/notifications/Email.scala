@@ -3,7 +3,6 @@ package notifications
 import java.net.SocketTimeoutException
 import java.util.{Date, Properties}
 
-import akka.actor.Actor
 import com.typesafe.config._
 import javax.mail._
 import javax.mail.internet.{InternetAddress, MimeMessage}
@@ -30,7 +29,7 @@ object EmailFileConfig extends EmailConfig {
   val timeout = conf.getString("email.timeout") //ms
 }
 
-class Email(conf: EmailConfig) extends Actor {
+class Email(conf: EmailConfig) {
   val properties = new Properties()
   properties.put("mail.transport.protocol", "smtp")
   properties.put("mail.smtp.host", conf.host)
@@ -76,8 +75,5 @@ class Email(conf: EmailConfig) extends Actor {
     }
   }
 
-  def receive = {
-    case e: EmailNotification =>
-      sendMessage(e.email, e.title, e.toString())
-  }
+  def send(e: EmailNotification) = sendMessage(e.email, "Weather Streams Alert", e.toString())
 }

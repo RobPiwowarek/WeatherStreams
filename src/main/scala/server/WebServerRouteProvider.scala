@@ -8,7 +8,7 @@ import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
 import domain.Domain._
 import domain.api._
 import notifications.EmailNotification
-import server.WebServer.{notificationSender, weatherClient}
+import server.WebServer.weatherClient
 import server.database.model.User
 import server.database.{DatabaseInterface, DatabaseProvider}
 import spray.json._
@@ -162,12 +162,6 @@ class WebServerRouteProvider(databaseProvider: DatabaseProvider) extends JsonSup
   private def handleUpdateUserRequest(request: UserUpdateRequest) = {
     database.updateUser(request)
     complete(HttpResponse(StatusCodes.OK))
-  }
-
-  private def sendMail(request: UserLoginRequest) = {
-    val body = weatherClient.getWeatherData(Seq(("q", "Warsaw"))).toString
-
-    notificationSender ! EmailNotification("user", request.username.value, body)
   }
 
   private def userToUserLoginResponse(user: User) = UserLoginResponse(ID(user.id.toInt), Email(user.email), Name(user.name), Surname(user.surname), SlackId(user.slackId))
