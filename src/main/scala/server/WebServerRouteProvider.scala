@@ -102,9 +102,9 @@ class WebServerRouteProvider(databaseProvider: DatabaseProvider) extends JsonSup
     complete(
       HttpResponse(
         StatusCodes.OK,
-        entity = AlertHistoryResponse(database
+        entity = database
           .getAlertHistoryList(id)
-          .map(alert => AlertHistoryEntry(Name(alert.parameterName), alert.parameterValue, alert.parameterLimit, alert.parameterValue > alert.parameterLimit))).toJson.toString
+          .map(alert => AlertHistoryEntry(Name(alert.parameterName), alert.parameterValue, alert.parameterLimit, alert.parameterValue > alert.parameterLimit)).toJson.toString
       ))
   }
 
