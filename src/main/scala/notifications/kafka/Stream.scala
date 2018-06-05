@@ -7,15 +7,15 @@ import org.apache.kafka.streams.kstream.Produced
 import org.apache.kafka.streams.{Consumed, KafkaStreams}
 import providers.openweathermap.Responses.Weather
 import server.database.DatabaseInterface
-import server.database.model.{AlertDefinition, DefinitionParameter, User}
+import server.database.model.{AlertDefinition, AlertHistory, DefinitionParameter, User}
 
 // takes weather data and produces email and slack notifications if alerts were triggered
 // also saves alert occurrences in the database
 class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnable {
   def getActiveAlerts(location: String): Seq[AlertDefinition] = mariaDb.getAlertsFromLocation(Location(location))
 
-  def getValue(param: DefinitionParameter, weather: Weather): BigDecimal = {
-    param.parameterName match {
+  def getValue(paramName: String, weather: Weather): BigDecimal = {
+    paramName match {
       case "TEMP" => weather.main.temp
       case "WIND" => weather.wind.speed
       case "RAIN" => weather.rain match {
@@ -29,12 +29,32 @@ class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnab
   }
 
   def conditionIsMet(param: DefinitionParameter, weather: Weather): Boolean = {
-    val value = getValue(param, weather)
+    val value = getValue(param.parameterName, weather)
     param.comparisonType match {
       case 1 => value < param.parameterLimit
       case 2 => value > param.parameterLimit
       case _ => throw new IllegalArgumentException("Invalid comparisonType, expected 1 or 2")
     }
+  }
+
+  def getAlertHistory(parameters: Seq[DefinitionParameter], weather: Weather) = {
+    def params = Seq("TEMP", "WIND", "RAIN", "HUMI", "PRES", "CLOU")
+
+    val limitMap = params.map {
+      paramName => {
+        val parameter = parameters.find(_.parameterName == paramName)
+        parameter match {
+          case Some(defParam) => paramName -> (Some(defParam.parameterLimit), conditionIsMet(defParam, weather))
+          case None => paramName -> (None, false)
+        }
+      }
+    }.toMap[String, (Option[Int], Boolean)]
+
+    for {
+      paramName <- params
+      historyEntry = AlertHistory(-1, -1, paramName, getValue(paramName, weather).toInt, limitMap(paramName)._1)
+      isOutOfLimit = limitMap(paramName)._2
+    } yield (historyEntry, isOutOfLimit)
   }
 
   def isEmail(key: String, dummy: Any) = {
@@ -67,13 +87,12 @@ class Stream(mariaDb: DatabaseInterface, conf: AlertStreamConfig) extends Runnab
           triggeredAlerts
             .foreach {
               case (alert, parameters) => {
-                val tuples = parameters.map {
-                  param => (param, getValue(param, weather).toInt)
-                }
-                mariaDb.insertAlert(alert, tuples) // save alert in the database
+                val history = getAlertHistory(parameters, weather)
+                // save alert in the database
+                // history = Seq[(AlertHistory, Boolean)], Boolean means outOfLimit
+                mariaDb.insertAlert(alert, history)
               }
             }
-
 
           def emailAlerts = for {
             tuple <- triggeredAlerts.filter(_._1.emailNotif)
