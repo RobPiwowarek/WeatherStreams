@@ -74,7 +74,7 @@ export class UserService {
 
   public saveUser(user: User): Observable<void> {
     this.currentUser = user;
-        return new Observable<void>();
-//    return this.httpClient.post<void>(this.baseUrl, user, this.httpOptions);
+//        return new Observable<void>();
+    return this.httpClient.post<void>(this.baseUrl, user, this.httpOptions);
   }
 }
