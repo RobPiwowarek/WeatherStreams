@@ -14,7 +14,7 @@ class Users(tag: Tag) extends Table[User](tag, Some("weather"), "weather_user") 
 
   def password = column[String]("password")
 
-  def email = column[String]("email", Nullable)
+  def email = column[String]("email")
 
   def * = (id, email, password, slackId, name, surname).mapTo[User]
 }
