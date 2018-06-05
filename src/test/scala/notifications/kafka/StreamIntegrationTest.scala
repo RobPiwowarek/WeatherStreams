@@ -116,7 +116,7 @@ class StreamIntegrationTest extends FlatSpec with EmbeddedKafka with MockFactory
 
       override def getAlertList(userId: Int): Seq[Alert] = Seq()
 
-      override def insertAlertHistory(id: Long, param: DefinitionParameter, value: Int): Unit = {}
+      override def insertAlertHistory(id: Long, param: AlertHistory, value: Boolean): Unit = {}
 
       override def updateAlertDefinition(alertRequest: AlertDefinitionRequest): Unit = {}
 

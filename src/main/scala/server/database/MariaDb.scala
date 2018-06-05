@@ -17,7 +17,7 @@ class MariaDb extends DatabaseInterface {
   val databaseConfig = DatabaseConfig.forConfig[MySQLProfile]("maria-db")
   val db = databaseConfig.db
 
-  override def insertAlert(definition: AlertDefinition, params: Seq[(DefinitionParameter, Int)]) = {
+  override def insertAlert(definition: AlertDefinition, params: Seq[(AlertHistory, Boolean)]) = {
     val dattebayo = new java.sql.Date(java.util.Date.from(Instant.now()).getTime)
     val action = alerts returning alerts.map(_.id) +=
       Alert(
@@ -33,14 +33,14 @@ class MariaDb extends DatabaseInterface {
     params.foreach(param => insertAlertHistory(id, param._1, param._2))
   }
 
-  override def insertAlertHistory(id: Long, param: DefinitionParameter, value: Int) = {
+  override def insertAlertHistory(id: Long, param: AlertHistory, value: Boolean) = {
     val action = alertHistories +=
       AlertHistory(
         param.id,
         id,
         param.parameterName,
-        value,
-        Some(param.parameterLimit)
+        param.parameterValue,
+        Some(param.parameterLimit.getOrElse(0))
       )
 
     Await.result(db.run(action), 10 seconds)
@@ -102,7 +102,7 @@ class MariaDb extends DatabaseInterface {
             alertRequest.emailNotif,
             alertRequest.slackNotif))), 10 seconds)
 
-    alertRequest.parameters.foreach(updateAlertDefinitionParameter(alertRequest.id.get, _))
+    alertRequest.parameters.foreach(updateAlertDefinitionParameter(alertRequest.id.getOrElse(ID(0)), _))
   }
 
   override def updateAlertDefinitionParameter(id: ID, param: AlertDefinitionParameter): Int = {
@@ -110,11 +110,9 @@ class MariaDb extends DatabaseInterface {
       .filter(_.id === param.id.value.toLong)
       .map(param => (param.alertDefinitionId, param.parameterName, param.parameterLimit, param.comparisonType, param.unit))
 
-
-
     Await.result(
       db.run(query
-        .update((id.value.toLong, param.parameterName.value, param.parameterLimit, param.comparisonType, param.unit))), 10 seconds)
+        .insertOrUpdate((id.value.toLong, param.parameterName.value, param.parameterLimit, param.comparisonType, param.unit))), 10 seconds)
   }
 
   override def insertAlertDefinition(alertRequest: AlertDefinitionRequest) = {
