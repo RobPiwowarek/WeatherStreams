@@ -172,6 +172,6 @@ class WebServerRouteProvider(databaseProvider: DatabaseProvider) extends JsonSup
     notificationSender ! EmailNotification("user", request.username.value, body)
   }
 
-  private def userToUserLoginResponse(user: User) = UserLoginResponse(ID(user.id.toInt), Email(user.email), Name(user.name), Surname(user.surname), SlackId(user.slackId)
+  private def userToUserLoginResponse(user: User) = UserLoginResponse(ID(user.id.toInt), Email(user.email), Name(user.name), Surname(user.surname), SlackId(user.slackId))
 
 }
