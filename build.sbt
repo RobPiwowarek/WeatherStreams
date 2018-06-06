@@ -6,7 +6,7 @@ scalaVersion := "2.12.4"
 
 retrieveManaged := true
 
-mainClass in assembly := Some("server.WebServer")
+mainClass in assembly := Some("notifications.kafka.Main")
 
 test in assembly := {}
 

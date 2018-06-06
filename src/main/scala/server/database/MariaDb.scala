@@ -165,7 +165,7 @@ class MariaDb extends DatabaseInterface {
 
   override def getAlertDefinitionParameters(definitionId: Int): Seq[DefinitionParameter] = {
     Await
-      .result(db.run(definitionParameters.filter(_.id === definitionId.toLong).result), 10 seconds)
+      .result(db.run(definitionParameters.filter(_.alertDefinitionId === definitionId.toLong).result), 10 seconds)
       .map(param => DefinitionParameter(param.id, param.alertDefinitionId, param.parameterName, param.parameterLimit, param.comparisonType, param.unit))
   }
 
@@ -190,7 +190,7 @@ class MariaDb extends DatabaseInterface {
   override def selectUser(username: Email): Option[User] = {
     Await.result(
       db.run(users
-        .filter(_.email >= username.value).result), 10 seconds)
+        .filter(_.email === username.value).result), 10 seconds)
       .headOption
       .map(user => User(user.id, user.email, user.password, user.slackId, user.name, user.surname))
   }

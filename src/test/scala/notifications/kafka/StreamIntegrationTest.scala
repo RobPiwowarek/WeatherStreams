@@ -39,7 +39,8 @@ class StreamIntegrationTest extends FlatSpec with EmbeddedKafka with MockFactory
   it should "fetch data from the weather-data topic and send notifications accordingly" in {
     val alerts = Seq(AlertDefinition(0, 0, "testEmailSlack", 0, "Test", true, true, true))
 
-    val params = Seq(DefinitionParameter(3, 2, "RAIN", 50, 1, "mm"))
+    val params = Seq(DefinitionParameter(3, 2, "RAIN", 50, 1, "mm"),
+      DefinitionParameter(3, 2, "TEMP", 0, 2, "C"))
 
     val expectedEmail = EmailNotification(s"${user.name} ${user.surname}", user.email, alerts.head.location, params)
     val expectedSlack = SlackNotification(user.slackId, alerts.head.location, params)

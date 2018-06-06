@@ -3,6 +3,7 @@ package notifications.kafka
 import java.util.concurrent.Executors
 
 import providers.openweathermap.OpenWeatherMapClient
+import server.WebServer
 import server.database.MariaDb
 
 object Main extends App {
@@ -14,5 +15,7 @@ object Main extends App {
   pool.submit(Consumers.Slack)
   pool.submit(new Producer(mariaDb, client, Configs.Producer))
   pool.submit(new Stream(mariaDb, Configs.Stream))
+
+  WebServer.main(Array()) // temporary (i hope)*/
 }
 
